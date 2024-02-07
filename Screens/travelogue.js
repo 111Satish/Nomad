@@ -6,7 +6,7 @@ const Travelogue = () => {
     const room1 = {
         name: "Agra: Taj Mahal",
         imageUrl: 'https://cdn.pixabay.com/photo/2015/07/29/22/56/taj-mahal-866692_1280.jpg',
-        rating: "* * * * *",
+        rating: 3.5,
         description: " This is a description box for max 2 or 3 lines ",
     };
 

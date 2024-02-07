@@ -1,22 +1,26 @@
-import React from "react";
-import { View, Text } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Travelogue from "./Screens/travelogue";
-import JoinRooms from "./Screens/joinRooms";
-import Profile from "./Screens/profile";
+import React from 'react';
+import {View, Text, Image, StyleSheet} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import SignUp from './Screens/signUp';
+import Login from './Screens/login';
+import BottomTab from './Navigation/bottomTab';
 
-const Tab = createBottomTabNavigator();
 
-const App = ()=>{
+
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
     <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name = "Travelogue" component={Travelogue}/>
-        <Tab.Screen name = "Joined Rooms" component={JoinRooms}/>
-        <Tab.Screen name = "Profile" component={Profile}/>
-      </Tab.Navigator>
+      <Stack.Navigator>
+        <Stack.Screen name = 'Sign Up' component={SignUp}/>
+        <Stack.Screen name = 'Login' component={Login}/>
+        <Stack.Screen name = 'BottomTab' component={BottomTab}/>
+      </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
+
+
 export default App;

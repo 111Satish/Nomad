@@ -1,26 +1,26 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import StarRating from "./rating";
 
-const Room = () => {
-    const imageUrl = 'https://cdn.pixabay.com/photo/2015/07/29/22/56/taj-mahal-866692_1280.jpg'
+const Room = ({roomData}) => {
 
     return (
         <View style={styles.container}>
             <Text style={styles.name}>
-                Agra: Taj Mahal
+                {roomData.name}
             </Text>
             <View style={styles.imageContainer}>
                 <Image
                     style={styles.image}
-                    source={{ uri: imageUrl }} 
+                    source={{ uri: roomData.imageUrl }} 
                 />
                 <View style={styles.rating}>
-                    <Text style={styles.ratingText}>Rating * * * * *</Text>
+                    <StarRating rating={roomData.rating}/>
                 </View>
             </View>
             <View style={styles.bottomContainer}>
                 <Text style={styles.description}>
-                    This is a description box. This box will have a maximum of two or three lines.
+                    {roomData.description}
                 </Text>
                 <TouchableOpacity style={styles.joinButton}>
                     <Text style={styles.buttonText}>Join</Text>
