@@ -1,32 +1,83 @@
 
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { 
+    View, 
+    Text, 
+    TextInput, 
+    TouchableOpacity, 
+    StyleSheet, 
+    ImageBackground, 
+} from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SignUp = ({navigation}) => {
+const SignUp = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
+  const [error, setError] = useState(null);
+  const [showError, setShowError] = useState(false); 
+  useEffect(() => {
+    AsyncStorage.getItem('userData')
+      .then((token) => {
+        if (token) {
+          navigation.navigate('BottomTab');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (error) {
+      setShowError(true); 
+
+      const timer = setTimeout(() => {
+        setShowError(false); // Hide error after 5 seconds
+      }, 5000);
+
+      return () => clearTimeout(timer); 
+    }
+  }, [error]);
 
   const isEmailValid = (text) => {
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(text);
   };
 
   const isPasswordValid = (text) => {
-
     return text.length >= 6;
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
+    try {
+      const response = await axios.post('http://10.2.106.243:5000/signup', {
+        userName: name,
+        userEmail: email,
+        userPassword: password,
+      });
 
-    console.log('Sign Up Pressed');
+      console.log('Sign Up Response:', response.data);
+      const userData = JSON.stringify(response.data)
+
+      await AsyncStorage.setItem('userData',userData);
+      navigation.navigate('BottomTab');
+
+    } catch (error) {
+        setShowError(true)
+      if (error.response && error.response.status === 409) {
+        setError('Email already exists.'); 
+      } else {
+        setError('Something went wrong. Please try again.'); 
+      }
+    }
   };
 
   return (
     <ImageBackground
-      source={require('../Assets/background.jpg')} 
+      source={require('../Assets/background.jpg')}
       style={styles.backgroundImage}
     >
       <View style={styles.container}>
@@ -71,17 +122,22 @@ const SignUp = ({navigation}) => {
         />
 
         <TouchableOpacity
-          style={[styles.signUpButton, isEmailValid(email) && isPasswordValid(password) && password === rePassword && styles.validForm]}
+          style={[
+            styles.signUpButton,
+            isEmailValid(email) && isPasswordValid(password) && password === rePassword && styles.validForm,
+          ]}
           onPress={handleSignUp}
           disabled={!isEmailValid(email) || !isPasswordValid(password) || password !== rePassword}
         >
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>navigation.navigate('Login')}>
-            <Text style = {styles.login}>
-                Already have an account? Login
-            </Text>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.login}>
+            Already have an account? Login
+          </Text>
         </TouchableOpacity>
+        {showError && <Text style={styles.errorText}>{error}</Text>}
       </View>
     </ImageBackground>
   );
@@ -145,7 +201,18 @@ const styles = StyleSheet.create({
     paddingLeft:5,
     paddingRight:5,
     borderRadius:20,
-  }
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    marginBottom: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    paddingLeft:5,
+    paddingRight:5,
+    borderRadius:20,
+  },
 });
 
+
 export default SignUp;
+
