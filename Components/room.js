@@ -2,24 +2,24 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import StarRating from "./rating";
 
-const Room = ({roomData}) => {
+const Room = ({ roomData }) => {
 
     return (
         <View style={styles.container}>
             <Text style={styles.name}>
-                {roomData.name}
+                {roomData.roomName}
             </Text>
             <View style={styles.imageContainer}>
                 <Image
                     style={styles.image}
-                    source={{ uri: roomData.imageUrl }} 
+                    source={{ uri: roomData.imageUrl }}
                 />
                 <View style={styles.rating}>
-                    <StarRating rating={roomData.rating}/>
+                    <StarRating rating={roomData.rating} />
                 </View>
             </View>
             <View style={styles.bottomContainer}>
-                <Text style={styles.description}>
+                <Text style={styles.descrip} numberOfLines={5}>
                     {roomData.description}
                 </Text>
                 <TouchableOpacity style={styles.joinButton}>
@@ -35,11 +35,12 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         alignContent: 'center',
+        paddingTop:3,
         padding: 20,
         backgroundColor: '#f8f8f8',
         borderRadius: 15,
         elevation: 5,
-        margin: 10,
+        margin: 3,
     },
     name: {
         alignSelf: 'center',
@@ -72,12 +73,11 @@ const styles = StyleSheet.create({
     bottomContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'space-between',   
     },
-    description: {
-        flex: 1,
-        width: '75%',
-        fontSize: 16,
+    descrip: {
+       flex: 1,
+        fontSize: 20,
         color: '#555',
     },
     joinButton: {
