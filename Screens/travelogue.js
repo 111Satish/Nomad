@@ -1,41 +1,62 @@
-
-import React, { useState, useEffect } from "react";
-import { View, Text, FlatList } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { View, Text, FlatList, RefreshControl } from "react-native";
+import { useIsFocused } from '@react-navigation/native';
 import Room from "../Components/room";
 import Search from "../Components/search";
-import axios from "axios";
+import userStore from "../MobX/userStore";
+import { observer } from "mobx-react";
 
-const Travelogue = () => {
+const Travelogue = ({ navigation }) => {
   const [areas, setAreas] = useState([]);
+  const [forceRender, setForceRender] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const isFocused = useIsFocused();
+  const fetchAreaData = () => {
+    try {
+      const response =  userStore.room;
+      
+      setAreas(response);
+    } catch (error) {
+      console.error('Error fetching area data:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
-  useEffect(() => {
-    const fetchAreaData = async () => {
-      try {
-        const response = await axios.post('http://10.2.106.243:5000/getArea');
-        setAreas(response.data);
-      } catch (error) {
-        console.error('Error fetching area data:', error);
-        // Handle error appropriately (e.g., show an error message)
-      }
-    };
-
+  const onRefresh = useCallback(() => {
+    setIsRefreshing(true);
     fetchAreaData();
+    setForceRender((prev) => !prev);
   }, []);
 
+  useEffect(() => {
+    if (isFocused) {
+      fetchAreaData();
+    }
+  }, [isFocused]);
+
   const renderItems = ({ item }) => {
-    return <Room roomData={item} />;
+    return <Room roomData={item} onUpdate={fetchAreaData} />;
   };
 
   return (
-    <View>
+    <View >
       <Search />
       <FlatList
         data={areas}
         renderItem={renderItems}
         keyExtractor={(item) => item._id}
+        extraData={forceRender}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            colors={['#3498db']}
+          />
+        }
       />
     </View>
   );
 };
 
-export default Travelogue;
+export default observer(Travelogue);

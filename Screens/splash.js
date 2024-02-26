@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { observer } from 'mobx-react';
+import userStore from '../MobX/userStore'; 
 
 const Splash = ({ navigation }) => {
   const fadeAnim = new Animated.Value(0);
@@ -8,31 +10,33 @@ const Splash = ({ navigation }) => {
   const taglineTranslateY = new Animated.Value(30);
 
   useEffect(() => {
-    // Fade in animation for the entire content
+    const loadUserData = async () => {
+      await userStore.initializeApp(); 
+    };
+
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 1500,
       useNativeDriver: true,
     }).start();
 
-    // Scale animation for the title
     Animated.timing(titleScale, {
       toValue: 1,
       duration: 1000,
       useNativeDriver: true,
     }).start();
 
-    // Translate animation for the tagline
     Animated.timing(taglineTranslateY, {
       toValue: 0,
       duration: 1000,
       useNativeDriver: true,
     }).start();
 
-    // Simulate a loading time (e.g., fetching data, initializing resources)
     const splashTimeout = setTimeout(() => {
-      navigation.replace('Sign Up');
+      navigation.replace(userStore.user ? 'BottomTab' : 'Sign Up');
     }, 5000);
+
+    loadUserData();
 
     return () => {
       clearTimeout(splashTimeout);
@@ -44,7 +48,7 @@ const Splash = ({ navigation }) => {
 
   return (
     <LinearGradient
-      colors={['#15436e', '#01020f']} // Gradient colors for the background
+      colors={['#15436e', '#01020f']}
       style={styles.container}
     >
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
@@ -98,4 +102,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Splash;
+export default observer(Splash);

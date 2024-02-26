@@ -6,7 +6,7 @@ import SignUp from './Screens/signUp';
 import Login from './Screens/login';
 import BottomTab from './Navigation/bottomTab';
 import Splash from './Screens/splash';
-
+import ChatScreen from './Screens/chatScreen';
 
 
 const Stack = createStackNavigator();
@@ -19,6 +19,7 @@ const App = () => {
         <Stack.Screen name = 'Sign Up' component={SignUp} options={{headerShown: false}}/>
         <Stack.Screen name = 'Login' component={Login} options={{headerShown: false}}/>
         <Stack.Screen name = 'BottomTab' component={BottomTab} options={{headerShown: false}}/>
+        <Stack.Screen name = 'ChatScreen' component={ChatScreen} options={{headerShown:true}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

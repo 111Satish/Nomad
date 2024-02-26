@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
     View, 
@@ -35,7 +34,7 @@ const SignUp = ({ navigation }) => {
       setShowError(true); 
 
       const timer = setTimeout(() => {
-        setShowError(false); // Hide error after 5 seconds
+        setShowError(false); 
       }, 5000);
 
       return () => clearTimeout(timer); 

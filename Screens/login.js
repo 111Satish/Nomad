@@ -1,78 +1,78 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import userStore from '../MobX/userStore'; 
+import { observer } from 'mobx-react';
 
 const Login = ({ navigation }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
 
-    const isEmailValid = (text) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(text);
+  const isEmailValid = (text) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(text);
+  };
+
+  const isPasswordValid = (text) => {
+    return text.length >= 6;
+  };
+
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      const token = await AsyncStorage.getItem('userData');
+      if (token) {
+        navigation.replace('BottomTab'); 
+      }
     };
 
-    const isPasswordValid = (text) => {
-        return text.length >= 6;
-    };
+    checkLoggedIn();
+  }, [navigation]);
 
-    useEffect(() => {
-        AsyncStorage.getItem('userData')
-          .then((token) => {
-            if (token) {
-              navigation.navigate('BottomTab');
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }, []);
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://10.2.106.243:5000/login', {
+        userEmail: email,
+        userPassword: password,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    const handleLogin = async () => {
-        try {
-            const response = await axios.post('http://10.2.106.243:5000/login', {
-                userEmail: email,
-                userPassword: password,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+      if (response.status !== 200) {
+        const errorData = await response.json();
+        let errorMessage = 'Login failed';
 
-            if (response.status !== 200) {
-                const errorData = await response.json();
-                let errorMessage = 'Login failed';
-
-                switch (response.status) {
-                    case 401:
-                        errorMessage = 'Invalid email or password';
-                        break;
-                    case 404:
-                        errorMessage = 'User not found';
-                        break;
-                    default:
-                        errorMessage = errorData.error || errorMessage;
-                }
-
-                setError(errorMessage);
-                return;
-            }
-
-            const data = await response.data;
-            const userData = JSON.stringify(data);
-            // Store token securely using AsyncStorage
-            await AsyncStorage.setItem('userData', userData);
-            navigation.navigate('BottomTab');
-
-        } catch (error) {
-            console.error(error);
-            setError('An error occurred. Please try again later.');
+        switch (response.status) {
+          case 401:
+            errorMessage = 'Invalid email or password';
+            break;
+          case 404:
+            errorMessage = 'User not found';
+            break;
+          default:
+            errorMessage = errorData.error || errorMessage;
         }
-    };
 
-    return (
-        <ImageBackground
+        setError(errorMessage);
+        return;
+      }
+
+      const data = await response.data;
+      userStore.setUser(data);
+      await userStore.saveUserToStorage(data);
+      navigation.replace('BottomTab');
+
+    } catch (error) {
+      console.error(error);
+      setError('An error occurred. Please try again later.');
+    }
+  };
+
+  return (
+            <ImageBackground
             source={require('../Assets/background.jpg')}
             style={styles.backgroundImage}
         >
@@ -114,7 +114,7 @@ const Login = ({ navigation }) => {
                 <Text style={styles.errorText}>{error}</Text>
             </View>
         </ImageBackground>
-    );
+  );
 };
 
 const styles = StyleSheet.create({
@@ -177,4 +177,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Login;
+
+export default observer(Login);
