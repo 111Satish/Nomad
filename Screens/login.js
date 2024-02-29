@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import userStore from '../MobX/userStore'; 
+import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react';
+import { apiUrl } from '../App';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -23,7 +24,7 @@ const Login = ({ navigation }) => {
     const checkLoggedIn = async () => {
       const token = await AsyncStorage.getItem('userData');
       if (token) {
-        navigation.replace('BottomTab'); 
+        navigation.replace('BottomTab');
       }
     };
 
@@ -32,7 +33,7 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://10.2.106.243:5000/login', {
+      const response = await axios.post(`${apiUrl}/login`, {
         userEmail: email,
         userPassword: password,
       }, {
@@ -72,109 +73,109 @@ const Login = ({ navigation }) => {
   };
 
   return (
-            <ImageBackground
-            source={require('../Assets/background.jpg')}
-            style={styles.backgroundImage}
+    <ImageBackground
+      source={require('../Assets/background.jpg')}
+      style={styles.backgroundImage}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>Nomad</Text>
+
+        <TextInput
+          style={[styles.input, !isEmailValid(email) && styles.invalidInput]}
+          placeholder="Email"
+          placeholderTextColor="#fff"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
+
+        <TextInput
+          style={[styles.input, !isPasswordValid(password) && styles.invalidInput]}
+          placeholder="Password"
+          placeholderTextColor="#fff"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        <TouchableOpacity
+          style={[styles.loginButton, isEmailValid(email) && isPasswordValid(password) && styles.validForm]}
+          onPress={handleLogin}
+          disabled={!isEmailValid(email) || !isPasswordValid(password)}
         >
-            <View style={styles.container}>
-                <Text style={styles.title}>Nomad</Text>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
 
-                <TextInput
-                    style={[styles.input, !isEmailValid(email) && styles.invalidInput]}
-                    placeholder="Email"
-                    placeholderTextColor="#fff"
-                    value={email}
-                    onChangeText={setEmail}
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                />
-
-                <TextInput
-                    style={[styles.input, !isPasswordValid(password) && styles.invalidInput]}
-                    placeholder="Password"
-                    placeholderTextColor="#fff"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                />
-
-                <TouchableOpacity
-                    style={[styles.loginButton, isEmailValid(email) && isPasswordValid(password) && styles.validForm]}
-                    onPress={handleLogin}
-                    disabled={!isEmailValid(email) || !isPasswordValid(password)}
-                >
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
-                    <Text style={styles.signup}>
-                        Not a member? Sign Up
-                    </Text>
-                </TouchableOpacity>
-                <Text style={styles.errorText}>{error}</Text>
-            </View>
-        </ImageBackground>
+        <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
+          <Text style={styles.signup}>
+            Not a member? Sign Up
+          </Text>
+        </TouchableOpacity>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-    backgroundImage: {
-        flex: 1,
-        resizeMode: 'cover',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    title: {
-        fontSize: 36,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 30,
-    },
-    input: {
-        width: 200,
-        height: 40,
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-        marginBottom: 10,
-        color: '#fff',
-        paddingHorizontal: 10,
-        borderRadius: 20,
-    },
-    invalidInput: {
-        borderColor: 'red',
-        borderWidth: 1,
-    },
-    loginButton: {
-        backgroundColor: '#4CAF50',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 20,
-        marginTop: 10,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    validForm: {
-        backgroundColor: '#00bcd4',
-    },
-    signup: {
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-        paddingLeft: 5,
-        paddingRight: 5,
-        color: 'blue',
-        margin: 10,
-        borderRadius: 20,
-    },
-    errorText: {
-        color: 'red',
-        marginBottom: 10,
-    },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 30,
+  },
+  input: {
+    width: 200,
+    height: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    marginBottom: 10,
+    color: '#fff',
+    paddingHorizontal: 10,
+    borderRadius: 20,
+  },
+  invalidInput: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+  loginButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  validForm: {
+    backgroundColor: '#00bcd4',
+  },
+  signup: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    paddingLeft: 5,
+    paddingRight: 5,
+    color: 'blue',
+    margin: 10,
+    borderRadius: 20,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+  },
 });
 
 

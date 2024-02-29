@@ -12,6 +12,7 @@ import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react-lite';
 
 const Tab = createBottomTabNavigator();
+
 const BottomTab = ({ navigation }) => {
   const [userData, setUserData] = useState(null);
 
@@ -29,61 +30,56 @@ const BottomTab = ({ navigation }) => {
     fetchUserInfo();
   }, []);
 
-  return (
+  // const handleLogout = async () => {
+  //   try {
+  //     userStore.clearData();
+  //     navigation.navigate('Login');
+  //   } catch (error) {
+  //     console.error('Error logging out:', error);
+  //   }
+  // };
 
+
+  return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerTitle: "",
-        headerLeft: ({ userInfo }) => {
-          return (
-            <View style={styles.container}>
-              <View>
-                <Image
-                  style={styles.profile}
-                  source={{
-                    uri: 'https://cdn.pixabay.com/photo/2015/07/29/22/56/taj-mahal-866692_1280.jpg',
-                  }}
-                />
-              </View>
-              <View>
-                <Text style={styles.name}>{userStore.user.userInfo.userName}</Text>
-                <Text style={styles.name}>{'📍 Tiruchirappalli'}</Text>
-              </View>
+        headerTitle: '',
+        headerLeft: () => (
+          <View style={styles.container}>
+            <View>
+              <Image
+                style={styles.profile}
+                source={{
+                  uri: 'https://cdn.pixabay.com/photo/2015/07/29/22/56/taj-mahal-866692_1280.jpg',
+                }}
+              />
             </View>
-          );
-        },
-
-        headerRight: () => {
-          return (
-            <TouchableOpacity onPress={() => {
-              AsyncStorage.clear();
-              navigation.navigate('Login')
-            }}>
-              <Text style={styles.logout}>
-                Logout
-              </Text>
-            </TouchableOpacity>
-
-          );
-        },
+            <View>
+              <Text style={styles.name}>{userStore.user.userInfo.userName}</Text>
+              <Text style={styles.name}>{'📍 Tiruchirappalli'}</Text>
+            </View>
+          </View>
+        ),
+        headerRight: () => (
+          <TouchableOpacity onPress={()=>{navigation.navigate('Feedback')}}>
+            <Text style={styles.logout}>Feedback</Text>
+          </TouchableOpacity>
+        ),
         tabBarIcon: ({ color, size }) => {
-
           if (route.name === 'Travelogue') {
             return <Icon1 name="travel-explore" size={30} color="black" />;
-          }
-          else if (route.name === 'Joined Rooms') {
+          } else if (route.name === 'Joined Rooms') {
             return <Icon2 name="layer-group" size={30} color="black" />;
-          }
-          else if (route.name === 'Profile') {
+          } else if (route.name === 'Profile') {
             return <Icon2 name="user-edit" size={30} color="black" />;
           }
-
         },
         tabBarLabelStyle: {
           fontSize: 16,
           fontWeight: 'bold',
         },
-      })}>
+      })}
+    >
       <Tab.Screen name="Travelogue" component={Travelogue} />
       <Tab.Screen name="Joined Rooms" component={JoinRooms} />
       <Tab.Screen name="Profile" component={Profile} />
@@ -115,6 +111,7 @@ const styles = StyleSheet.create({
     color: 'blue',
     padding: 10,
     fontWeight: 'bold',
-  }
+  },
 });
+
 export default observer(BottomTab);

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    View, 
-    Text, 
-    TextInput, 
-    TouchableOpacity, 
-    StyleSheet, 
-    ImageBackground, 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ImageBackground,
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiUrl } from '../App';
 
 const SignUp = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -16,7 +17,7 @@ const SignUp = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
   const [error, setError] = useState(null);
-  const [showError, setShowError] = useState(false); 
+  const [showError, setShowError] = useState(false);
   useEffect(() => {
     AsyncStorage.getItem('userData')
       .then((token) => {
@@ -31,13 +32,13 @@ const SignUp = ({ navigation }) => {
 
   useEffect(() => {
     if (error) {
-      setShowError(true); 
+      setShowError(true);
 
       const timer = setTimeout(() => {
-        setShowError(false); 
+        setShowError(false);
       }, 5000);
 
-      return () => clearTimeout(timer); 
+      return () => clearTimeout(timer);
     }
   }, [error]);
 
@@ -52,7 +53,7 @@ const SignUp = ({ navigation }) => {
 
   const handleSignUp = async () => {
     try {
-      const response = await axios.post('http://10.2.106.243:5000/signup', {
+      const response = await axios.post(`${apiUrl}/signup`, {
         userName: name,
         userEmail: email,
         userPassword: password,
@@ -61,15 +62,15 @@ const SignUp = ({ navigation }) => {
       console.log('Sign Up Response:', response.data);
       const userData = JSON.stringify(response.data)
 
-      await AsyncStorage.setItem('userData',userData);
+      await AsyncStorage.setItem('userData', userData);
       navigation.navigate('BottomTab');
 
     } catch (error) {
-        setShowError(true)
+      setShowError(true)
       if (error.response && error.response.status === 409) {
-        setError('Email already exists.'); 
+        setError('Email already exists.');
       } else {
-        setError('Something went wrong. Please try again.'); 
+        setError('Something went wrong. Please try again.');
       }
     }
   };
@@ -193,22 +194,22 @@ const styles = StyleSheet.create({
   validForm: {
     backgroundColor: '#00bcd4',
   },
-  login:{
-    backgroundColor:'rgba(255, 255, 255, 0.5)',
-    color:'blue',
+  login: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    color: 'blue',
     margin: 10,
-    paddingLeft:5,
-    paddingRight:5,
-    borderRadius:20,
+    paddingLeft: 5,
+    paddingRight: 5,
+    borderRadius: 20,
   },
   errorText: {
     color: 'red',
     fontSize: 16,
     marginBottom: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    paddingLeft:5,
-    paddingRight:5,
-    borderRadius:20,
+    paddingLeft: 5,
+    paddingRight: 5,
+    borderRadius: 20,
   },
 });
 

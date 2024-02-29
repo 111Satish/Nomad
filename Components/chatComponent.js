@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { io } from 'socket.io-client';
 import socketIOClient from 'socket.io-client';
+import { apiUrl } from '../App';
 
 const ChatComponent = ({ roomId, userData}) => {
-  const socket = io('http://10.2.106.243:5000'); 
+  const socket = io(`${apiUrl}`); 
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
 
   useEffect(() => {
-    const socket = socketIOClient('http://10.2.106.243:5000', {
+    const socket = socketIOClient(`${apiUrl}`, {
       query: { roomId },
     });
 

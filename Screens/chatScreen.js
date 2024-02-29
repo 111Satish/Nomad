@@ -8,12 +8,12 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from 'react-native';
 import io from 'socket.io-client';
 import userStore from '../MobX/userStore';
 import axios from 'axios';
-
-const SERVER_URL = 'http://10.2.106.243:5000';
+import { apiUrl } from '../App';
 
 const ChatScreen = ({ route }) => {
   const { roomData } = route.params;
@@ -23,11 +23,12 @@ const ChatScreen = ({ route }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
+  const [inputContainerMargin, setInputContainerMargin] = useState(5);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://10.2.106.243:5000/getChats/${roomId}`);
+        const response = await axios.get(`${apiUrl}/getChats/${roomId}`);
         const chats = response.data;
         setMessages([...chats].reverse());
       } catch (error) {
@@ -39,7 +40,7 @@ const ChatScreen = ({ route }) => {
   }, [roomId]);
 
   useEffect(() => {
-    const newSocket = io(SERVER_URL);
+    const newSocket = io(apiUrl);
     setSocket(newSocket);
 
     newSocket.on('connect', () => {
@@ -49,13 +50,28 @@ const ChatScreen = ({ route }) => {
 
     newSocket.on('chat message', (msg) => {
       console.log('Received message:', msg);
-      setMessages((prevMessages) => [msg,...prevMessages]);
+      setMessages((prevMessages) => [msg, ...prevMessages]);
     });
+
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setInputContainerMargin(90);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setInputContainerMargin(5);
+      }
+    );
 
     return () => {
       if (newSocket) {
         newSocket.disconnect();
       }
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
     };
   }, [roomId]);
 
@@ -63,7 +79,7 @@ const ChatScreen = ({ route }) => {
     if (socket) {
       const chatMessage = {
         userId: userData._id,
-        name: userData.userName, 
+        name: userData.userName,
         time: new Date().toLocaleTimeString(),
         message: message,
       };
@@ -76,7 +92,7 @@ const ChatScreen = ({ route }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
+      style={{ flex: 1, paddingTop: 50 }}
     >
       <View style={{ flex: 1 }}>
         <FlatList
@@ -88,27 +104,27 @@ const ChatScreen = ({ route }) => {
                 item.userId === userData._id ? styles.sentMessage : styles.receivedMessage,
               ]}
             >
-              <Text style={styles.name}>
-                ~{item.name}
-              </Text>
-              <Text style={styles.messageText}>
-                {item.message}
-              </Text>
-              <Text style={styles.messageTime}>
-                {item.time}
-              </Text>
+              <Text style={styles.name}>~{item.name}</Text>
+              <Text style={styles.messageText}>{item.message}</Text>
+              <Text style={styles.messageTime}>{item.time}</Text>
             </View>
           )}
           keyExtractor={(item, index) => index.toString()}
-          inverted={true} 
+          inverted={true}
         />
       </View>
-      <View style={styles.inputContainer}>
+      <View
+        style={[
+          styles.inputContainer,
+          { marginBottom: inputContainerMargin },
+        ]}
+      >
         <TextInput
           style={styles.input}
           onChangeText={(text) => setMessage(text)}
           value={message}
           placeholder="Type your message..."
+          multiline={true}
         />
         <Button title="Send" onPress={sendMessage} />
       </View>
@@ -138,7 +154,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     color: '#333',
-    fontWeight:'bold',
+    fontWeight: 'bold',
   },
   messageTime: {
     fontSize: 12,
@@ -159,6 +175,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginRight: 8,
     padding: 8,
+    color: 'black',
   },
 });
 

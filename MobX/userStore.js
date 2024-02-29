@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { apiUrl } from "../App";
 
 class UserStore {
   user = {
@@ -21,6 +22,7 @@ class UserStore {
   joinRoom = async (roomId) => {
     this.user.userInfo.joinedRooms.push(roomId);
     await this.updateUserBackend();
+    await this.saveUserToStorage();
     console.log("Join Room Called");
   };
 
@@ -29,6 +31,7 @@ class UserStore {
       (id) => id !== roomId
     );
     await this.updateUserBackend();
+    await this.saveUserToStorage();
     console.log("Leave Room Called");
   };
 
@@ -61,7 +64,7 @@ class UserStore {
 
   async updateUserBackend() {
     try {
-      await axios.post('http://10.2.106.243:5000/updateUser', this.user);
+      await axios.post(`${apiUrl}/updateUser`, this.user);
       console.log('update user backend called');
       console.log(this.user.userInfo.joinedRooms);
     } catch (error) {
@@ -72,7 +75,7 @@ class UserStore {
   async loadRoomFromBackend() {
     try {
       console.log('is getting Data')
-      const response = await axios.post('http://10.2.106.243:5000/getRoom');
+      const response = await axios.post(`${apiUrl}/getRoom`);
       this.room = response.data;
       console.log("Room  data Checking")
       console.log(this.room);
@@ -84,11 +87,24 @@ class UserStore {
 
   async loadUserFromBackend() {
     try {
-      const response = await axios.get('http://10.2.106.243:5000/getUserData');
+      const response = await axios.get(`${apiUrl}/getUserData`);
       this.setUser(response.data);
     } catch (error) {
       console.error('Error loading user data from backend:', error);
     }
+  }
+
+  async clearData() {
+    this.user = {
+      userInfo: {
+        _id: "",
+        joinedRooms: [],
+      },
+    };
+    this.room = {
+      roomInfo: []
+    };
+    await AsyncStorage.clear();
   }
 
 

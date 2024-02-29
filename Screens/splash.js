@@ -1,18 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { observer } from 'mobx-react';
-import userStore from '../MobX/userStore'; 
+import userStore from '../MobX/userStore';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 const Splash = ({ navigation }) => {
+  const [token, setToken] = useState(null);
   const fadeAnim = new Animated.Value(0);
   const titleScale = new Animated.Value(0);
   const taglineTranslateY = new Animated.Value(30);
 
   useEffect(() => {
-    const loadUserData = async () => {
-      await userStore.initializeApp(); 
+    const fetchToken = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('token'); 
+        setToken(storedToken);
+        await userStore.initializeApp(); 
+      } catch (error) {
+        console.error('Error fetching token:', error);
+      }
     };
+
+    fetchToken();
 
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -33,10 +43,12 @@ const Splash = ({ navigation }) => {
     }).start();
 
     const splashTimeout = setTimeout(() => {
-      navigation.replace(userStore.user ? 'BottomTab' : 'Sign Up');
+      if (token && userStore.user) {
+        navigation.replace('BottomTab');
+      } else {
+        navigation.replace('Login'); 
+      }
     }, 5000);
-
-    loadUserData();
 
     return () => {
       clearTimeout(splashTimeout);

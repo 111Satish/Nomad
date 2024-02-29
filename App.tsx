@@ -7,7 +7,9 @@ import Login from './Screens/login';
 import BottomTab from './Navigation/bottomTab';
 import Splash from './Screens/splash';
 import ChatScreen from './Screens/chatScreen';
-
+import FeedbackScreen from './Screens/feedBackScreen';
+const apiUrl = 'https://nomadbackend.onrender.com';
+export {apiUrl};
 
 const Stack = createStackNavigator();
 
@@ -20,6 +22,7 @@ const App = () => {
         <Stack.Screen name = 'Login' component={Login} options={{headerShown: false}}/>
         <Stack.Screen name = 'BottomTab' component={BottomTab} options={{headerShown: false}}/>
         <Stack.Screen name = 'ChatScreen' component={ChatScreen} options={{headerShown:true}}/>
+        <Stack.Screen name = 'Feedback' component={FeedbackScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
