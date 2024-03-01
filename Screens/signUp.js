@@ -63,7 +63,7 @@ const SignUp = ({ navigation }) => {
       const userData = JSON.stringify(response.data)
 
       await AsyncStorage.setItem('userData', userData);
-      navigation.navigate('BottomTab');
+      navigation.navigate('Login');
 
     } catch (error) {
       setShowError(true)

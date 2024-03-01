@@ -108,6 +108,32 @@ class UserStore {
   }
 
 
+  updateProfile(editedProfile) {
+    const currentProfile = this.user.userInfo;
+  
+    // Update only the properties that are provided in editedProfile
+    if (editedProfile.userName !== undefined) {
+      currentProfile.userName = editedProfile.userName;
+    }
+    if (editedProfile.city !== undefined) {
+      currentProfile.city = editedProfile.city;
+    }
+    if (editedProfile.mobile !== undefined) {
+      currentProfile.mobile = editedProfile.mobile;
+    }
+    if (editedProfile.profession !== undefined) {
+      currentProfile.profession = editedProfile.profession;
+    }
+    if (editedProfile.dateOfBirth !== undefined) {
+      currentProfile.dateOfBirth = editedProfile.dateOfBirth;
+    }
+  
+    // Now, update the user in the backend and save to storage
+    this.updateUserBackend();
+    this.saveUserToStorage();
+  }
+  
+
   async initializeApp() {
     const loadedFromStorage = await this.loadUserFromStorage();
 
@@ -118,6 +144,7 @@ class UserStore {
     await this.loadRoomFromBackend();
   }
 }
+
 
 const userStore = new UserStore();
 export default userStore;

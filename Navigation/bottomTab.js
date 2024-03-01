@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import Icon1 from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Travelogue from '../Screens/travelogue';
 import JoinRooms from '../Screens/joinRooms';
-import Profile from '../Screens/profile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react-lite';
@@ -30,22 +28,14 @@ const BottomTab = ({ navigation }) => {
     fetchUserInfo();
   }, []);
 
-  // const handleLogout = async () => {
-  //   try {
-  //     userStore.clearData();
-  //     navigation.navigate('Login');
-  //   } catch (error) {
-  //     console.error('Error logging out:', error);
-  //   }
-  // };
-
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerTitle: '',
         headerLeft: () => (
-          <View style={styles.container}>
+          <View>
+          <TouchableOpacity style={styles.container} onPress={()=>navigation.navigate('Profile')}>
             <View>
               <Image
                 style={styles.profile}
@@ -54,10 +44,11 @@ const BottomTab = ({ navigation }) => {
                 }}
               />
             </View>
-            <View>
+            <View style={styles.textContainer}>
               <Text style={styles.name}>{userStore.user.userInfo.userName}</Text>
               <Text style={styles.name}>{'📍 Tiruchirappalli'}</Text>
             </View>
+          </TouchableOpacity>
           </View>
         ),
         headerRight: () => (
@@ -70,8 +61,6 @@ const BottomTab = ({ navigation }) => {
             return <Icon1 name="travel-explore" size={30} color="black" />;
           } else if (route.name === 'Joined Rooms') {
             return <Icon2 name="layer-group" size={30} color="black" />;
-          } else if (route.name === 'Profile') {
-            return <Icon2 name="user-edit" size={30} color="black" />;
           }
         },
         tabBarLabelStyle: {
@@ -82,7 +71,6 @@ const BottomTab = ({ navigation }) => {
     >
       <Tab.Screen name="Travelogue" component={Travelogue} />
       <Tab.Screen name="Joined Rooms" component={JoinRooms} />
-      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 };
@@ -95,6 +83,9 @@ const styles = StyleSheet.create({
     padding: 5,
     position: 'absolute',
     paddingRight: 10,
+  },
+  textContainer:{
+    marginLeft:10,
   },
   name: {
     fontWeight: 'bold',

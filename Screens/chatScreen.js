@@ -92,7 +92,7 @@ const ChatScreen = ({ route }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1, paddingTop: 50 }}
+      style={{ flex: 1, marginBottom:0}}
     >
       <View style={{ flex: 1 }}>
         <FlatList
@@ -134,6 +134,7 @@ const ChatScreen = ({ route }) => {
 
 const styles = StyleSheet.create({
   messageContainer: {
+    marginTop:0,
     maxWidth: '80%',
     padding: 10,
     borderRadius: 8,

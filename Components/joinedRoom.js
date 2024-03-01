@@ -57,7 +57,7 @@ const JoinedRoom = ({ roomData }) => {
     };
 
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('ChatScreen', { roomData: roomData })}>
+        <TouchableOpacity onPress={() => navigation.navigate('TabNavigation', { roomData: roomData })}>
 
             <View style={styles.container}>
                 <Text style={styles.name}>

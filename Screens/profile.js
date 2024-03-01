@@ -3,24 +3,26 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { observer } from 'mobx-react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import userStore from '../MobX/userStore';
+import { useNavigation } from '@react-navigation/native';
 
-const Profile = ({ navigation }) => {
+const Profile = () => {
+  const navigation = useNavigation();
   const user = userStore.user.userInfo;
 
-  const handleLogout = () => {
-    // Implement your logout logic here
-    // Example: navigation.navigate('Login');
+  const handleLogout = async () => {
+    try {
+      userStore.clearData();
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
-  const handleEditProfile = () => {
-    // Implement your edit profile logic here
-    // Example: navigation.navigate('EditProfile');
-  };
 
   return (
     <View style={styles.container}>
       <View style={styles.profileHeader}>
-        <TouchableOpacity style={styles.editIcon} onPress={handleEditProfile}>
+        <TouchableOpacity style={styles.editIcon} onPress={()=>navigation.navigate('Edit Profile')}>
           <Icon name="pencil" size={20} color="white" />
         </TouchableOpacity>
       </View>
@@ -38,7 +40,6 @@ const Profile = ({ navigation }) => {
         <Text style={styles.label}>City: {user.city}</Text>
         <Text style={styles.label}>Mobile: {user.mobile}</Text>
         <Text style={styles.label}>Profession: {user.profession}</Text>
-        {/* Add Date of Birth if available */}
         <Text style={styles.label}>Date of Birth: {user.dateOfBirth}</Text>
       </View>
 
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
   profilePicContainer: {
     borderWidth: 5,
     borderRadius: 100,
-    borderColor: '#00bcd4',
+    borderColor: 'blue',
     overflow: 'hidden',
     marginBottom: 20,
   },
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   editIcon: {
-    backgroundColor: '#00bcd4',
+    backgroundColor: 'blue',
     padding: 10,
     borderRadius: 50,
   },
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   logoutButton: {
     position: 'absolute',
     bottom: 20,
-    backgroundColor: '#00bcd4',
+    backgroundColor: 'blue',
     padding: 10,
     borderRadius: 10,
   },
