@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiUrl } from '../App';
+import Loading from '../Components/loading';
 
 const SignUp = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -17,7 +19,9 @@ const SignUp = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [showError, setShowError] = useState(false);
+
   useEffect(() => {
     AsyncStorage.getItem('userData')
       .then((token) => {
@@ -53,6 +57,8 @@ const SignUp = ({ navigation }) => {
 
   const handleSignUp = async () => {
     try {
+      setIsLoading(true); 
+
       const response = await axios.post(`${apiUrl}/signup`, {
         userName: name,
         userEmail: email,
@@ -66,7 +72,9 @@ const SignUp = ({ navigation }) => {
       navigation.navigate('Login');
 
     } catch (error) {
-      setShowError(true)
+      setShowError(true);
+      setIsLoading(false); 
+
       if (error.response && error.response.status === 409) {
         setError('Email already exists.');
       } else {
@@ -80,65 +88,71 @@ const SignUp = ({ navigation }) => {
       source={require('../Assets/background.jpg')}
       style={styles.backgroundImage}
     >
-      <View style={styles.container}>
-        <Text style={styles.title}>Nomad</Text>
-        <Text style={styles.subtitle}>Travel freely, Connect Globally</Text>
+      {isLoading ? ( 
+        <View style={styles.loadingContainer}>
+          <Loading/>
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <Text style={styles.title}>Nomad</Text>
+          <Text style={styles.subtitle}>Travel freely, Connect Globally</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Name"
-          placeholderTextColor="#fff"
-          value={name}
-          onChangeText={setName}
-          autoCapitalize="words"
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            placeholderTextColor="#fff"
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="words"
+          />
 
-        <TextInput
-          style={[styles.input, !isEmailValid(email) && styles.invalidInput]}
-          placeholder="Email"
-          placeholderTextColor="#fff"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
+          <TextInput
+            style={[styles.input, !isEmailValid(email) && styles.invalidInput]}
+            placeholder="Email"
+            placeholderTextColor="#fff"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
 
-        <TextInput
-          style={[styles.input, !isPasswordValid(password) && styles.invalidInput]}
-          placeholder="Password"
-          placeholderTextColor="#fff"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+          <TextInput
+            style={[styles.input, !isPasswordValid(password) && styles.invalidInput]}
+            placeholder="Password"
+            placeholderTextColor="#fff"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
-        <TextInput
-          style={[styles.input, password !== rePassword && styles.invalidInput]}
-          placeholder="Re-enter Password"
-          placeholderTextColor="#fff"
-          value={rePassword}
-          onChangeText={setRePassword}
-          secureTextEntry
-        />
+          <TextInput
+            style={[styles.input, password !== rePassword && styles.invalidInput]}
+            placeholder="Re-enter Password"
+            placeholderTextColor="#fff"
+            value={rePassword}
+            onChangeText={setRePassword}
+            secureTextEntry
+          />
 
-        <TouchableOpacity
-          style={[
-            styles.signUpButton,
-            isEmailValid(email) && isPasswordValid(password) && password === rePassword && styles.validForm,
-          ]}
-          onPress={handleSignUp}
-          disabled={!isEmailValid(email) || !isPasswordValid(password) || password !== rePassword}
-        >
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.signUpButton,
+              isEmailValid(email) && isPasswordValid(password) && password === rePassword && styles.validForm,
+            ]}
+            onPress={handleSignUp}
+            disabled={!isEmailValid(email) || !isPasswordValid(password) || password !== rePassword}
+          >
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.login}>
-            Already have an account? Login
-          </Text>
-        </TouchableOpacity>
-        {showError && <Text style={styles.errorText}>{error}</Text>}
-      </View>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.login}>
+              Already have an account? Login
+            </Text>
+          </TouchableOpacity>
+          {showError && <Text style={styles.errorText}>{error}</Text>}
+        </View>
+      )}
     </ImageBackground>
   );
 };
@@ -147,6 +161,11 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -215,4 +234,3 @@ const styles = StyleSheet.create({
 
 
 export default SignUp;
-

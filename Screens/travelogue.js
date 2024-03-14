@@ -5,6 +5,7 @@ import Room from "../Components/room";
 import Search from "../Components/search";
 import userStore from "../MobX/userStore";
 import { observer } from "mobx-react";
+import Loading from "../Components/loading";
 
 const Travelogue = ({ navigation }) => {
   const [areas, setAreas] = useState([]);
@@ -15,12 +16,14 @@ const Travelogue = ({ navigation }) => {
 
   const fetchAreaData = async () => {
     try {
-      const response = await userStore.room;
+      await userStore.loadUserFromStorage();
+      const response = userStore.room;
       setAreas(response);
+      if(response)
+      setIsLoading(false);
     } catch (error) {
       console.error('Error fetching area data:', error);
     } finally {
-      setIsLoading(false);
       setIsRefreshing(false);
     }
   };
@@ -46,7 +49,7 @@ const Travelogue = ({ navigation }) => {
     <View>
       <Search />
       {isLoading ? (
-        <ActivityIndicator size="large" color="#3498db" style={{ marginTop: 20 }} />
+        <Loading/>
       ) : (
         <FlatList
           data={areas}

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react';
 import { apiUrl } from '../App';
+import Loading from '../Components/loading';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const isEmailValid = (text) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,6 +35,8 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
+      setIsLoading(true); // Start loading
+
       const response = await axios.post(`${apiUrl}/login`, {
         userEmail: email,
         userPassword: password,
@@ -58,6 +62,7 @@ const Login = ({ navigation }) => {
         }
 
         setError(errorMessage);
+        setIsLoading(false); // Stop loading
         return;
       }
 
@@ -69,6 +74,7 @@ const Login = ({ navigation }) => {
     } catch (error) {
       console.error(error);
       setError('An error occurred. Please try again later.');
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -80,38 +86,45 @@ const Login = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.title}>Nomad</Text>
 
-        <TextInput
-          style={[styles.input, !isEmailValid(email) && styles.invalidInput]}
-          placeholder="Email"
-          placeholderTextColor="#fff"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
+        {isLoading ? ( 
+          <Loading/>
+        ) : (
+          <>
+            <TextInput
+              style={[styles.input, !isEmailValid(email) && styles.invalidInput]}
+              placeholder="Email"
+              placeholderTextColor="#fff"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
 
-        <TextInput
-          style={[styles.input, !isPasswordValid(password) && styles.invalidInput]}
-          placeholder="Password"
-          placeholderTextColor="#fff"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+            <TextInput
+              style={[styles.input, !isPasswordValid(password) && styles.invalidInput]}
+              placeholder="Password"
+              placeholderTextColor="#fff"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-        <TouchableOpacity
-          style={[styles.loginButton, isEmailValid(email) && isPasswordValid(password) && styles.validForm]}
-          onPress={handleLogin}
-          disabled={!isEmailValid(email) || !isPasswordValid(password)}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.loginButton, isEmailValid(email) && isPasswordValid(password) && styles.validForm]}
+              onPress={handleLogin}
+              disabled={!isEmailValid(email) || !isPasswordValid(password)}
+            >
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
-          <Text style={styles.signup}>
-            Not a member? Sign Up
-          </Text>
-        </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
+              <Text style={styles.signup}>
+                Not a member? Sign Up
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
+        
         <Text style={styles.errorText}>{error}</Text>
       </View>
     </ImageBackground>
@@ -177,6 +190,5 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
 
 export default observer(Login);

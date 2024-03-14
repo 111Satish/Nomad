@@ -83,18 +83,18 @@ android {
         versionName "1.0"
     }
     signingConfigs {
-        // release {
-        //     storeFile file('nomad.keystore')
-        //     storePassword '123456'
-        //     keyAlias 'nomad_al'
-        //     keyPassword '123456'
-        // }
-        debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+        release {
+            storeFile file('nomad.keystore')
+            storePassword '123456'
+            keyAlias 'nomad_al'
+            keyPassword '123456'
         }
+        // debug {
+        //     storeFile file('debug.keystore')
+        //     storePassword 'android'
+        //     keyAlias 'androiddebugkey'
+        //     keyPassword 'android'
+        // }
     }
     buildTypes {
         debug {

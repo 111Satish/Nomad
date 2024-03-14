@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import StarRating from './rating';
 import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react';
 
-const Room = ({ roomData, navigation }) => {
+const Room = ({ roomData }) => {
+  const navigation = useNavigation();
   const [isJoined, setIsJoined] = useState(false);
   const userId = userStore.user.userInfo._id;
 
@@ -35,6 +36,7 @@ const Room = ({ roomData, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={()=>navigation.navigate('Room Details', { roomData: roomData })}>
       <Text style={styles.name}>{roomData.roomName}</Text>
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{ uri: roomData.imageUrl }} />
@@ -54,6 +56,7 @@ const Room = ({ roomData, navigation }) => {
           <Text style={styles.buttonText}>{isJoined ? 'Joined' : 'Join'}</Text>
         </TouchableOpacity>
       </View>
+      </TouchableOpacity>
     </View>
   );
 };

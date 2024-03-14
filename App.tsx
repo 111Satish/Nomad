@@ -11,8 +11,9 @@ import FeedbackScreen from './Screens/feedBackScreen';
 import EditProfile from './Screens/editProfile';
 import Profile from './Screens/profile';
 import TabNavigation from './Navigation/tabNavigation';
+import RoomDetailsScreen from './Screens/roomDetailsScreen';
 
-const apiUrl = 'https://nomadbackend.onrender.com';
+const apiUrl = 'https://nomadbackend.azurewebsites.net';
 export { apiUrl };
 
 const Stack = createStackNavigator();
@@ -20,7 +21,7 @@ const Stack = createStackNavigator();
 const CustomHeader = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const roomData = route.params.roomData;
+  const {roomData} = route.params;
 
   return (
     <View style={styles.headerContainer}>
@@ -36,11 +37,7 @@ const CustomHeader = () => {
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          header: (props) => <CustomHeader {...props} />,
-        }}
-      >
+      <Stack.Navigator>
         <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
         <Stack.Screen name="Sign Up" component={SignUp} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
@@ -49,7 +46,8 @@ const App = () => {
         <Stack.Screen name="Feedback" component={FeedbackScreen} />
         <Stack.Screen name="Edit Profile" component={EditProfile} />
         <Stack.Screen name="Profile" component={Profile} />
-        <Stack.Screen name="TabNavigation" component={TabNavigation} options={{ headerShown: true }} />
+        <Stack.Screen name="TabNavigation" component={TabNavigation} options={{ header: (props) => <CustomHeader {...props} />, }} />
+        <Stack.Screen name="Room Details" component={RoomDetailsScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

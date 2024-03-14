@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  Dimensions,
 } from 'react-native';
 import io from 'socket.io-client';
 import userStore from '../MobX/userStore';
@@ -23,7 +24,7 @@ const ChatScreen = ({ route }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
-  const [inputContainerMargin, setInputContainerMargin] = useState(5);
+  const [inputContainerMargin, setInputContainerMargin] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,14 +56,21 @@ const ChatScreen = ({ route }) => {
 
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
-      () => {
-        setInputContainerMargin(90);
+      (event) => {
+        const screenHeight = Dimensions.get('window').height;
+        const keyboardHeight = event.endCoordinates.height;
+        const inputContainerHeight = 50; // Adjust this value based on your input container height
+        const availableSpace = screenHeight - keyboardHeight - inputContainerHeight;
+        const messagesHeight = messages.length * 50; // Adjust this value based on your message item height
+        const margin = Math.max(availableSpace - messagesHeight, 0);
+        setInputContainerMargin(margin);
       }
     );
+
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
-        setInputContainerMargin(5);
+        setInputContainerMargin(0);
       }
     );
 
@@ -73,7 +81,7 @@ const ChatScreen = ({ route }) => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
-  }, [roomId]);
+  }, [roomId, messages]);
 
   const sendMessage = () => {
     if (socket) {
@@ -91,8 +99,8 @@ const ChatScreen = ({ route }) => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1, marginBottom:0}}
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      style={{ flex: 1 }}
     >
       <View style={{ flex: 1 }}>
         <FlatList
@@ -134,7 +142,6 @@ const ChatScreen = ({ route }) => {
 
 const styles = StyleSheet.create({
   messageContainer: {
-    marginTop:0,
     maxWidth: '80%',
     padding: 10,
     borderRadius: 8,
@@ -168,6 +175,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 8,
+    backgroundColor: '#FFF',
+    borderTopWidth: 1,
+    borderTopColor: '#DDD',
   },
   input: {
     flex: 1,

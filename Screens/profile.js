@@ -40,7 +40,11 @@ const Profile = () => {
         <Text style={styles.label}>City: {user.city}</Text>
         <Text style={styles.label}>Mobile: {user.mobile}</Text>
         <Text style={styles.label}>Profession: {user.profession}</Text>
-        <Text style={styles.label}>Date of Birth: {user.dateOfBirth}</Text>
+        {/* <Text style={styles.label}>Date of Birth: {user.dateOfBirthtoLocaleDateString()}</Text> */}
+        <Text style={styles.label}>
+  Date of Birth: {user.dateOfBirth instanceof Date ? user.dateOfBirth.toLocaleDateString() : 'N/A'}
+</Text>
+
       </View>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>

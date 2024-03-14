@@ -8,6 +8,10 @@ class UserStore {
     userInfo: {
       _id: "",
       joinedRooms: [],
+      city:"",
+      mobile:"",
+      profession:"",
+      dateOfBirth:""
     },
   };
 
@@ -66,7 +70,7 @@ class UserStore {
     try {
       await axios.post(`${apiUrl}/updateUser`, this.user);
       console.log('update user backend called');
-      console.log(this.user.userInfo.joinedRooms);
+      console.log(this.user.userInfo);
     } catch (error) {
       console.error('Error updating user data on the backend:', error);
     }
@@ -108,29 +112,26 @@ class UserStore {
   }
 
 
-  updateProfile(editedProfile) {
-    const currentProfile = this.user.userInfo;
+  async updateProfile(editedProfile) {
   
-    // Update only the properties that are provided in editedProfile
     if (editedProfile.userName !== undefined) {
-      currentProfile.userName = editedProfile.userName;
+      this.user.userInfo.userName = editedProfile.userName;
     }
     if (editedProfile.city !== undefined) {
-      currentProfile.city = editedProfile.city;
+      this.user.userInfo.city = editedProfile.city;
     }
     if (editedProfile.mobile !== undefined) {
-      currentProfile.mobile = editedProfile.mobile;
+      this.user.userInfo.mobile = editedProfile.mobile;
     }
     if (editedProfile.profession !== undefined) {
-      currentProfile.profession = editedProfile.profession;
+      this.user.userInfo.profession = editedProfile.profession;
     }
     if (editedProfile.dateOfBirth !== undefined) {
-      currentProfile.dateOfBirth = editedProfile.dateOfBirth;
+      this.user.userInfo.dateOfBirth = editedProfile.dateOfBirth;
     }
   
-    // Now, update the user in the backend and save to storage
-    this.updateUserBackend();
-    this.saveUserToStorage();
+    await this.updateUserBackend();
+    await this.saveUserToStorage();
   }
   
 

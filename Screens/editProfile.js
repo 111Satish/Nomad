@@ -15,7 +15,7 @@ const EditProfile = ({ navigation }) => {
     city: user.city,
     mobile: user.mobile,
     profession: user.profession,
-    dateOfBirth: user.dateOfBirth || new Date(),
+    dateOfBirth: user.dateOfBirth instanceof Date ? user.dateOfBirth : new Date(), 
   });
 
   const handleSave = () => {
@@ -25,7 +25,7 @@ const EditProfile = ({ navigation }) => {
   };
 
   const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(Platform.OS === 'ios'); // Optional: Hide datepicker on iOS after selection
+    setShowDatePicker(Platform.OS === 'ios'); 
 
     if (selectedDate instanceof Date) {
       setEditedUser({ ...editedUser, dateOfBirth: selectedDate });
@@ -84,13 +84,13 @@ const EditProfile = ({ navigation }) => {
         <Text style={styles.label}>Date of Birth</Text>
         <TouchableOpacity onPress={showDatePickerModal}>
           <Text style={styles.input}>
-            {editedUser.dateOfBirth}
+            {editedUser.dateOfBirth.toDateString()} 
           </Text>
         </TouchableOpacity>
         <Icon name="calendar" size={20} color="blue" style={styles.calendarIcon} />
         {showDatePicker && (
           <DateTimePicker
-            value={editedUser.dateOfBirth || new Date()} 
+            value={editedUser.dateOfBirth} 
             mode="date"
             is24Hour={true}
             display="default"
@@ -106,6 +106,7 @@ const EditProfile = ({ navigation }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
