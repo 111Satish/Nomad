@@ -57,23 +57,29 @@ const SignUp = ({ navigation }) => {
   const handleSignUp = async () => {
     try {
       setIsLoading(true);
-
+      if (name.length < 3) {
+        setShowError(true);
+        setIsLoading(false);
+        setError('Name should be at least 3 characters long.');
+        return;
+      }
+  
       const response = await axios.post(`${apiUrl}/signup`, {
         userName: name,
         userEmail: email,
         userPassword: password,
       });
-
+  
       console.log('Sign Up Response:', response.data);
       const userData = JSON.stringify(response.data)
-
+  
       await AsyncStorage.setItem('userData', userData);
       navigation.navigate('Login');
-
+  
     } catch (error) {
       setShowError(true);
       setIsLoading(false);
-
+  
       if (error.response && error.response.status === 409) {
         setError('Email already exists.');
       } else {
@@ -81,6 +87,7 @@ const SignUp = ({ navigation }) => {
       }
     }
   };
+  
 
   return (
     <ImageBackground

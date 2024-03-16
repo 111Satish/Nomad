@@ -9,16 +9,16 @@ import Loading from '../Components/loading';
 
 const JoinedRooms = ({ navigation }) => {
   const [roomsData, setRoomsData] = useState([]);
-  const [loading, setLoading] = useState(true); // Initial loading state
+  const [loading, setLoading] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          setLoading(true); 
-          await userStore.loadRoomFromBackend(); 
+          setLoading(true);
+          await userStore.loadRoomFromBackend();
           setRoomsData(userStore.room || []);
-          setLoading(false); // Set loading to false after data is fetched
+          setLoading(false);
         } catch (error) {
           console.error('Error fetching data:', error.message);
         }
@@ -35,19 +35,28 @@ const JoinedRooms = ({ navigation }) => {
   const renderItems = ({ item }) => {
     return <Room roomData={item} />;
   };
-  if(loading)
-    return <Loading/>
 
-  return (
-    <View style= {{marginBottom:'10%'}}>
-      <Search />
+  if (loading)
+    return <Loading />;
+  
+  if (userJoinedRooms.length < 1)
+    return (
+      <View style={{ padding: 10, alignContent: 'center', paddingTop:20 }}>
+        <Text style={{ color: 'black', fontSize:18, alignSelf:'center' }}>You haven't joined any room.</Text>
+      </View>
+    );
+  else {
+    return (
+      <View style={{ marginBottom: '10%' }}>
+        <Search />
         <FlatList
           data={userJoinedRooms}
           renderItem={renderItems}
           keyExtractor={(item) => item._id}
         />
-    </View>
-  );
+      </View>
+    );
+  }
 };
 
 export default observer(JoinedRooms);
