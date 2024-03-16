@@ -3,8 +3,11 @@ import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const StarRating = ({ rating }) => {
-  const filledStars = Math.floor(rating);
-  const halfStar = rating % 1 !== 0;
+  // Ensure that rating is within valid range (0 to 5)
+  const normalizedRating = Math.max(0, Math.min(rating, 5));
+  
+  const filledStars = Math.floor(normalizedRating);
+  const halfStar = normalizedRating % 1 !== 0;
   const emptyStars = 5 - filledStars - (halfStar ? 1 : 0);
 
   return (
@@ -20,6 +23,7 @@ const StarRating = ({ rating }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

@@ -59,9 +59,9 @@ const ChatScreen = ({ route }) => {
       (event) => {
         const screenHeight = Dimensions.get('window').height;
         const keyboardHeight = event.endCoordinates.height;
-        const inputContainerHeight = 50; // Adjust this value based on your input container height
+        const inputContainerHeight = 50; 
         const availableSpace = screenHeight - keyboardHeight - inputContainerHeight;
-        const messagesHeight = messages.length * 50; // Adjust this value based on your message item height
+        const messagesHeight = messages.length * 50; 
         const margin = Math.max(availableSpace - messagesHeight, 0);
         setInputContainerMargin(margin);
       }
@@ -84,12 +84,16 @@ const ChatScreen = ({ route }) => {
   }, [roomId, messages]);
 
   const sendMessage = () => {
+    if (!message.trim()) {
+      return; 
+    }
+
     if (socket) {
       const chatMessage = {
         userId: userData._id,
         name: userData.userName,
         time: new Date().toLocaleTimeString(),
-        message: message,
+        message: message.trim(), 
       };
 
       socket.emit('chat message', roomId, chatMessage);

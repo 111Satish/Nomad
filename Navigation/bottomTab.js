@@ -46,7 +46,7 @@ const BottomTab = ({ navigation }) => {
             </View>
             <View style={styles.textContainer}>
               <Text style={styles.name}>{userStore.user.userInfo.userName}</Text>
-              <Text style={styles.name}>{'📍 Tiruchirappalli'}</Text>
+              <Text style={styles.name}>{'📍 Loading...'}</Text>
             </View>
           </TouchableOpacity>
           </View>

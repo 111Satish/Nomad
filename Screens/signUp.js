@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
-  ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -57,7 +56,7 @@ const SignUp = ({ navigation }) => {
 
   const handleSignUp = async () => {
     try {
-      setIsLoading(true); 
+      setIsLoading(true);
 
       const response = await axios.post(`${apiUrl}/signup`, {
         userName: name,
@@ -73,7 +72,7 @@ const SignUp = ({ navigation }) => {
 
     } catch (error) {
       setShowError(true);
-      setIsLoading(false); 
+      setIsLoading(false);
 
       if (error.response && error.response.status === 409) {
         setError('Email already exists.');
@@ -88,10 +87,8 @@ const SignUp = ({ navigation }) => {
       source={require('../Assets/background.jpg')}
       style={styles.backgroundImage}
     >
-      {isLoading ? ( 
-        <View style={styles.loadingContainer}>
-          <Loading/>
-        </View>
+      {isLoading ? (
+          <Loading />
       ) : (
         <View style={styles.container}>
           <Text style={styles.title}>Nomad</Text>
@@ -107,30 +104,31 @@ const SignUp = ({ navigation }) => {
           />
 
           <TextInput
-            style={[styles.input, !isEmailValid(email) && styles.invalidInput]}
+            style={[styles.input, !isEmailValid(email.toLowerCase().trim()) && styles.invalidInput]}
             placeholder="Email"
             placeholderTextColor="#fff"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => setEmail(text.toLowerCase().trim())} 
             autoCapitalize="none"
             keyboardType="email-address"
           />
 
           <TextInput
-            style={[styles.input, !isPasswordValid(password) && styles.invalidInput]}
+            style={[styles.input, !isPasswordValid(password.trim()) && styles.invalidInput]}
             placeholder="Password"
             placeholderTextColor="#fff"
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) => setPassword(text.trim())} 
             secureTextEntry
           />
+
 
           <TextInput
             style={[styles.input, password !== rePassword && styles.invalidInput]}
             placeholder="Re-enter Password"
             placeholderTextColor="#fff"
             value={rePassword}
-            onChangeText={setRePassword}
+            onChangeText={(text) =>setRePassword(text.trim())}
             secureTextEntry
           />
 

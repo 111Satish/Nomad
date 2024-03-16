@@ -62,7 +62,7 @@ const Login = ({ navigation }) => {
         }
 
         setError(errorMessage);
-        setIsLoading(false); // Stop loading
+        setIsLoading(false); 
         return;
       }
 
@@ -74,7 +74,7 @@ const Login = ({ navigation }) => {
     } catch (error) {
       console.error(error);
       setError('An error occurred. Please try again later.');
-      setIsLoading(false); // Stop loading
+      setIsLoading(false); 
     }
   };
 
@@ -95,7 +95,7 @@ const Login = ({ navigation }) => {
               placeholder="Email"
               placeholderTextColor="#fff"
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) =>setEmail(text.toLowerCase().trim())}
               autoCapitalize="none"
               keyboardType="email-address"
             />
@@ -105,7 +105,7 @@ const Login = ({ navigation }) => {
               placeholder="Password"
               placeholderTextColor="#fff"
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) =>setPassword(text.trim())}
               secureTextEntry
             />
 

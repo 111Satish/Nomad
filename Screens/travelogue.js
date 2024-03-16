@@ -46,11 +46,13 @@ const Travelogue = ({ navigation }) => {
   };
 
   return (
-    <View>
-      <Search />
+    <View style = {{marginBottom:'10%'}}>
+      
       {isLoading ? (
         <Loading/>
       ) : (
+        <>
+        <Search />
         <FlatList
           data={areas}
           renderItem={renderItems}
@@ -64,6 +66,7 @@ const Travelogue = ({ navigation }) => {
             />
           }
         />
+        </>
       )}
     </View>
   );

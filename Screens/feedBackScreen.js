@@ -1,19 +1,35 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import LinearGradient from 'react-native-linear-gradient'; 
+import LinearGradient from 'react-native-linear-gradient';
+import axios from 'axios';
+import { apiUrl } from '../App';
 
 const FeedbackScreen = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [feedbackText, setFeedbackText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
 
   const feedbackOptions = ['Select Feedback Option', 'User Interface (UI)', 'Functionality', 'Concept', 'Performance', 'General Impressions'];
 
-  const handleFeedbackSubmit = () => {
-    console.log('Selected Option:', selectedOption);
-    console.log('Feedback Text:', feedbackText);
-    setSelectedOption('');
-    setFeedbackText('');
+  const handleFeedbackSubmit = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${apiUrl}/feedback`, {
+        type: selectedOption,
+        feedback: feedbackText
+      });
+      setIsLoading(false);
+      setFeedbackMessage(response.data);
+      setFeedbackModalVisible(true);
+      setFeedbackText('');
+      setSelectedOption('');
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
   };
 
   return (
@@ -24,7 +40,7 @@ const FeedbackScreen = () => {
       <View style={styles.container}>
         <Image
           style={styles.logo}
-          source={require('../Assets/nomadLogo.png')} 
+          source={require('../Assets/nomadLogo.png')}
         />
         <Text style={styles.title}>Share Your Precious Insights</Text>
 
@@ -54,6 +70,23 @@ const FeedbackScreen = () => {
         <TouchableOpacity style={styles.submitButton} onPress={handleFeedbackSubmit}>
           <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
+
+        <Modal
+          visible={feedbackModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setFeedbackModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalMessage}>{feedbackMessage}</Text>
+              <TouchableOpacity onPress={() => setFeedbackModalVisible(false)}>
+                <Text style={styles.closeButton}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
       </View>
     </LinearGradient>
   );
@@ -64,12 +97,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
+    position:'relative',
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 20,
   },
   logo: {
+    marginTop:5,
+    position:'relative',
     width: 100,
     height: 100,
     marginBottom: 20,
@@ -78,33 +114,35 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#fff', 
+    color: '#fff',
   },
   dropdownContainer: {
+    borderRadius:50,
     marginBottom: 20,
     width: '80%',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 10,
   },
   dropdown: {
+    borderRadius:50,
     height: 50,
     width: '100%',
-    color: '#333', 
+    color: '#333',
   },
   textAreaContainer: {
     marginBottom: 20,
     width: '80%',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 10,
   },
   textArea: {
     height: 100,
     padding: 10,
     textAlignVertical: 'top',
-    color: '#333', 
+    color: '#333',
   },
   submitButton: {
-    backgroundColor: '#2ecc71', 
+    backgroundColor: '#2ecc71',
     padding: 15,
     borderRadius: 10,
   },
@@ -112,6 +150,26 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalMessage: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  closeButton: {
+    fontSize: 16,
+    color: '#2ecc71',
   },
 });
 

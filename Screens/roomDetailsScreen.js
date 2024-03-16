@@ -1,32 +1,58 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, TextInput } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, TextInput, Alert } from 'react-native';
 import StarRating from '../Components/rating';
 import { ScrollView } from 'react-native-gesture-handler';
 import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { apiUrl } from '../App';
+import Loading from '../Components/loading';
 
 const RoomDetailsScreen = ({ route }) => {
   const { roomData } = route.params;
   const userId = userStore.user.userInfo._id;
-  const navigation = useNavigation(); // Access navigation object
+  const userName = userStore.user.userInfo.userName;
+  const [roomDetails, setRoomDetails] = useState(null);
+  const [nomadRating, setNomadRating] = useState(0);
+  const [isLoading, setIsLoading] = useState(false); 
 
-  const [isJoined, setIsJoined] = useState(false);
-
-  const roomDetails = {
-    images: [
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Ram_Janmbhoomi_Mandir%2C_Ayodhya_Dham.jpg/417px-Ram_Janmbhoomi_Mandir%2C_Ayodhya_Dham.jpg',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Sarayu_River_night_view%2C_Ayodhya_001.jpg/1920px-Sarayu_River_night_view%2C_Ayodhya_001.jpg',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Vijayraghav_Mandir%2C_Ayodhya.jpg/1280px-Vijayraghav_Mandir%2C_Ayodhya.jpg',
-    ],
-    reviews: [
-      { user: 'User1', rating: 4, comment: 'Great room!' },
-      { user: 'User2', rating: 5, comment: 'Amazing experience!' },
-    ],
-  };
+  useEffect(() => {
+    const fetchRoomDetails = async () => {
+      setIsLoading(true); 
+      try {
+        const response = await axios.post(`${apiUrl}/roomDetails`, { roomId: roomData._id });
+        const roomDetailsData = response.data;
+        if (roomDetailsData && roomDetailsData.reviews && roomDetailsData.reviews.length > 0) {
+          const totalRating = roomDetailsData.reviews.reduce((acc, curr) => acc + curr.nomadRating, 0);
+          const averageRating = totalRating / roomDetailsData.reviews.length;
+          setNomadRating(averageRating);
+        } else {
+          setNomadRating(0);
+        }
+  
+        setRoomDetails(roomDetailsData);
+      } catch (error) {
+        console.error('Error fetching room details:', error);
+      } finally {
+        setIsLoading(false); 
+      }
+    };
+    fetchRoomDetails();
+  }, [roomData._id]);
 
   const [userRating, setUserRating] = useState(0);
   const [userReview, setUserReview] = useState('');
+  const [isJoined, setIsJoined] = useState(false);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (userStore.user.userInfo.joinedRooms.includes(roomData._id)) {
+      setIsJoined(true);
+    } else {
+      setIsJoined(false);
+    }
+  }, [roomData._id]);
 
   const handleJoinRoom = async () => {
     try {
@@ -41,45 +67,79 @@ const RoomDetailsScreen = ({ route }) => {
   const handleRate = (rating) => {
     setUserRating(rating);
   };
-
-  const handleReviewSubmit = () => {
-    console.log('User Rating:', userRating);
-    console.log('User Review:', userReview);
-    setUserReview('');
+  const handleReviewSubmit = async () => {
+    if (userReview.length < 20) {
+      Alert.alert('Review message should be at least 20 characters long.');
+      return;
+    }
+  
+    if (userRating === 0) {
+      Alert.alert('Please provide a rating.');
+      return;
+    }
+  
+    try {
+      const response = await axios.post(`${apiUrl}/review`, {
+        roomId: roomData._id,
+        userId: userId,
+        userName: userName,
+        nomadRating: userRating,
+        revMsg: userReview
+      });
+  
+      console.log('User Rating:', userRating);
+      console.log('User Review:', userReview);
+      setUserReview('');
+      Alert.alert( response.data);
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Error', 'Failed to submit review. Please try again later.');
+    }
   };
+  
+  if (isLoading) { 
+    return (
+    <Loading />
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.roomName}>{roomData.roomName}</Text>
       <View style={styles.imageContainer}>
-        <FlatList
-          data={roomDetails.images}
+        {roomDetails && roomDetails.img && roomDetails.img.length > 0 ? (
+          <FlatList
+          data={roomDetails.img}
           keyExtractor={(item, index) => index.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
-            <Image style={styles.image} source={{ uri: item }} />
+            <Image style={styles.image} source={{ uri: item.imgUrl }} /> 
           )}
         />
+        
+        ) : (
+          <Image style={styles.image} source={require('../Assets/dummy-image.jpg')} />
+        )}
       </View>
 
-      <Text style={styles.description}>{roomData.description}</Text>
+      {roomDetails && roomDetails.description && (
+        <Text style={styles.description}>{roomDetails.description}</Text>
+      )}
 
       <View style={styles.buttonContainer}>
-        {/* Join button */}
         <TouchableOpacity
-          onPress={isJoined ? null : handleJoinRoom} // Disable when joined
+          onPress={isJoined ? null : handleJoinRoom}
           style={[styles.joinButton, isJoined && styles.joinedButton]}
           disabled={isJoined}
         >
           <Text style={styles.buttonText}>{isJoined ? 'Joined' : 'Join'}</Text>
         </TouchableOpacity>
 
-        {/* Chat button (using navigation) */}
         <TouchableOpacity
-          onPress={() => navigation.navigate('TabNavigation', { roomData })} // Navigate to chat room
+          onPress={() => navigation.navigate('TabNavigation', { roomData })}
           style={[styles.chatButton, isJoined && styles.joinedButton]}
-          disabled={!isJoined} // Disable button if not joined
+          disabled={!isJoined}
         >
           <Text style={styles.buttonText}>Chat</Text>
         </TouchableOpacity>
@@ -95,18 +155,19 @@ const RoomDetailsScreen = ({ route }) => {
       <View style={styles.userRatingContainer}>
         <Text style={styles.ratingText}>Nomad Rating:</Text>
         <View style={styles.rating}>
-          <StarRating rating={roomData.rating} />
+          <StarRating rating={nomadRating} />
         </View>
+      </View>
+
+      <View style={styles.userRatingContainer}>
+        <Text style={styles.ratingText}>Rate Your Experience:</Text>
+        <View style={styles.numberRatingContainer}>
+          {[1, 2, 3, 4, 5].map((number) => (
+            <TouchableOpacity key={number} onPress={() => handleRate(number)}>
+              <Text style={[styles.ratingNumber, number === userRating && styles.selectedRatingNumber]}>{number}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
-        <View style={styles.userRatingContainer}>
-        <Text style={styles.ratingText}>Rate Your Experiance:</Text>
-          <View style={styles.numberRatingContainer}>
-            {[1, 2, 3, 4, 5].map((number) => (
-              <TouchableOpacity key={number} onPress={() => handleRate(number)}>
-                <Text style={[styles.ratingNumber, number === userRating && styles.selectedRatingNumber]}>{number}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
       </View>
 
       <TextInput
@@ -124,15 +185,19 @@ const RoomDetailsScreen = ({ route }) => {
 
       <View style={styles.reviewsContainer}>
         <Text style={styles.reviewsTitle}>User Reviews:</Text>
-        {roomDetails.reviews.map((review, index) => (
-          <View key={index} style={styles.reviewItem}>
-            <Text style={styles.reviewUser}>{review.user}</Text>
-            <View style={styles.rating}>
-              <StarRating rating={review.rating} />
+        {roomDetails && roomDetails.reviews && roomDetails.reviews.length > 0 ? (
+          roomDetails.reviews.map((review, index) => (
+            <View key={index} style={styles.reviewItem}>
+              <Text style={styles.reviewUser}>{review.userName}</Text>
+              <View style={styles.rating}>
+                <StarRating rating={review.nomadRating} />
+              </View>
+              <Text style={styles.reviewComment}>{review.revMsg}</Text>
             </View>
-            <Text style={styles.reviewComment}>{review.comment}</Text>
-          </View>
-        ))}
+          ))
+        ) : (
+          <Text>No reviews available</Text>
+        )}
       </View>
     </ScrollView>
   );
@@ -141,13 +206,13 @@ const RoomDetailsScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 10,
   },
   roomName: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-    color:'black',
+    color: 'black',
   },
   imageContainer: {
     width: 'auto',
@@ -163,15 +228,15 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     marginBottom: 10,
-    color:'black'
+    color: 'black'
   },
   joinButton: {
     backgroundColor: '#3498db',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    width:'40%',
-    alignItems:'center',
+    width: '40%',
+    alignItems: 'center',
   },
   buttonText: {
     color: '#fff',
@@ -179,9 +244,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   joinedButton: {
-    width:'40%',
+    width: '40%',
     backgroundColor: 'green',
-    alignItems:'center',
+    alignItems: 'center',
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -189,7 +254,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   ratingText: {
-    color:'black',
+    color: 'black',
     fontSize: 16,
     marginRight: 10,
   },
@@ -204,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
-    color:'black',
+    color: 'black',
   },
   submitReviewButton: {
     backgroundColor: '#3498db',
@@ -224,28 +289,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color:'black'
+    color: 'black'
   },
   reviewItem: {
     marginBottom: 10,
-    color:'color',
+    color: 'color',
   },
   reviewUser: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
-    color:'black',
+    color: 'black',
   },
   reviewRating: {
     marginBottom: 5,
   },
   reviewComment: {
     fontSize: 14,
-    color:'black',
+    color: 'black',
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
     marginBottom: 10,
   },
   chatButton: {
@@ -254,12 +319,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     width: '40%',
-    alignItems:'center'
+    alignItems: 'center'
   },
   numberRatingContainer: {
     flexDirection: 'row',
-    justifyContent: 'wrap', 
-    width: '100%', 
+    justifyContent: 'wrap',
+    width: '100%',
   },
   ratingNumber: {
     fontSize: 18,
@@ -267,11 +332,11 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 1,
     borderColor: '#ccc',
-    marginLeft:5,
-    color:'black',
+    marginLeft: 5,
+    color: 'black',
   },
   selectedRatingNumber: {
-    backgroundColor: '#3498db', 
+    backgroundColor: '#3498db',
     color: '#fff',
   },
 });

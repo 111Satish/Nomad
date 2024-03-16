@@ -35,19 +35,17 @@ const JoinedRooms = ({ navigation }) => {
   const renderItems = ({ item }) => {
     return <Room roomData={item} />;
   };
+  if(loading)
+    return <Loading/>
 
   return (
-    <View>
+    <View style= {{marginBottom:'10%'}}>
       <Search />
-      {loading ? ( // Show loading component if data is loading
-        <Loading />
-      ) : (
         <FlatList
           data={userJoinedRooms}
           renderItem={renderItems}
           keyExtractor={(item) => item._id}
         />
-      )}
     </View>
   );
 };

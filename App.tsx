@@ -14,6 +14,7 @@ import TabNavigation from './Navigation/tabNavigation';
 import RoomDetailsScreen from './Screens/roomDetailsScreen';
 
 const apiUrl = 'https://nomadbackend.azurewebsites.net';
+//const apiUrl = 'http://10.2.106.243:5000'
 export { apiUrl };
 
 const Stack = createStackNavigator();
@@ -21,7 +22,7 @@ const Stack = createStackNavigator();
 const CustomHeader = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const {roomData} = route.params;
+  const { roomData } = route.params;
 
   return (
     <View style={styles.headerContainer}>
