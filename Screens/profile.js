@@ -12,17 +12,19 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       userStore.clearData();
-      navigation.navigate('Login');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
     } catch (error) {
       console.error('Error logging out:', error);
     }
   };
 
-
   return (
     <View style={styles.container}>
       <View style={styles.profileHeader}>
-        <TouchableOpacity style={styles.editIcon} onPress={()=>navigation.navigate('Edit Profile')}>
+        <TouchableOpacity style={styles.editIcon} onPress={() => navigation.navigate('Edit Profile')}>
           <Icon name="pencil" size={20} color="white" />
         </TouchableOpacity>
       </View>
@@ -40,11 +42,9 @@ const Profile = () => {
         <Text style={styles.label}>City: {user.city}</Text>
         <Text style={styles.label}>Mobile: {user.mobile}</Text>
         <Text style={styles.label}>Profession: {user.profession}</Text>
-        {/* <Text style={styles.label}>Date of Birth: {user.dateOfBirthtoLocaleDateString()}</Text> */}
         <Text style={styles.label}>
-  Date of Birth: {user.dateOfBirth instanceof Date ? user.dateOfBirth.toLocaleDateString() : 'N/A'}
-</Text>
-
+          Date of Birth: {user.dateOfBirth instanceof Date ? user.dateOfBirth.toLocaleDateString() : 'N/A'}
+        </Text>
       </View>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>

@@ -19,10 +19,15 @@ const EditProfile = ({ navigation }) => {
   });
 
   const handleSave = () => {
-    userStore.updateProfile(editedUser);
-    console.log('Edited User Data:', editedUser);
-    navigation.goBack();
+    if (editedUser.userName.length >= 3 && editedUser.userName.length <30) {
+      userStore.updateProfile(editedUser);
+      console.log('Edited User Data:', editedUser);
+      navigation.goBack();
+    } else {
+      alert('Name should be more than 3 characters and less than 30');
+    }
   };
+  
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(Platform.OS === 'ios'); 

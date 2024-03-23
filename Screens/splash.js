@@ -3,10 +3,13 @@ import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { observer } from 'mobx-react';
 import userStore from '../MobX/userStore';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+import TicTacToe from './tictactoe'; 
 
 const Splash = ({ navigation }) => {
   const [token, setToken] = useState(null);
+  const [isConnected, setIsConnected] = useState(true);
   const fadeAnim = new Animated.Value(0);
   const titleScale = new Animated.Value(0);
   const taglineTranslateY = new Animated.Value(30);
@@ -14,9 +17,10 @@ const Splash = ({ navigation }) => {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('token'); 
+        const storedToken = await AsyncStorage.getItem('token');
         setToken(storedToken);
-        await userStore.initializeApp(); 
+        if(token)
+        await userStore.initializeApp();
       } catch (error) {
         console.error('Error fetching token:', error);
       }
@@ -42,21 +46,28 @@ const Splash = ({ navigation }) => {
       useNativeDriver: true,
     }).start();
 
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+    });
+
     const splashTimeout = setTimeout(() => {
-      if (token && userStore.user) {
+      if (!isConnected) {
+        navigation.replace('TicTacToe'); 
+      } else if (token && userStore.user) {
         navigation.replace('BottomTab');
       } else {
-        navigation.replace('Login'); 
+        navigation.replace('Login');
       }
-    }, 5000);
+    }, 3000);
 
     return () => {
       clearTimeout(splashTimeout);
       fadeAnim.setValue(0);
       titleScale.setValue(0);
       taglineTranslateY.setValue(30);
+      unsubscribe();
     };
-  }, [navigation, fadeAnim, titleScale, taglineTranslateY]);
+  }, [navigation, fadeAnim, titleScale, taglineTranslateY, isConnected, token]);
 
   return (
     <LinearGradient

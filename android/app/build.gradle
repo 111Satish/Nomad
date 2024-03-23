@@ -54,7 +54,7 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -74,13 +74,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.nomad"
+    namespace "com.techsatish4u.nomad"
     defaultConfig {
-        applicationId "com.nomad"
+        applicationId "com.techsatish4u.nomad"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
     }
     signingConfigs {
         release {
@@ -95,15 +95,18 @@ android {
         //     keyAlias 'androiddebugkey'
         //     keyPassword 'android'
         // }
+
+
     }
     buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-        }
+        // debug {
+        //     // signingConfig signingConfigs.debug
+        // }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

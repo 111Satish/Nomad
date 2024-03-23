@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import LinearGradient from 'react-native-linear-gradient';
@@ -29,8 +29,15 @@ const FeedbackScreen = () => {
     } catch (error) {
       setIsLoading(false);
       console.log(error);
+      setFeedbackMessage(error);
     }
   };
+
+  useEffect(() => {
+    if (feedbackMessage) {
+      console.log('Feedback message:', feedbackMessage);
+    }
+  }, [feedbackMessage]);
 
   return (
     <LinearGradient
@@ -166,6 +173,7 @@ const styles = StyleSheet.create({
   modalMessage: {
     fontSize: 18,
     marginBottom: 20,
+    color:'black'
   },
   closeButton: {
     fontSize: 16,

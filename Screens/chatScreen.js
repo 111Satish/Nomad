@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -24,7 +24,7 @@ const ChatScreen = ({ route }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
-  const [inputContainerMargin, setInputContainerMargin] = useState(0);
+  const inputContainerBottomMarginRef = useRef(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,20 +57,14 @@ const ChatScreen = ({ route }) => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       (event) => {
-        const screenHeight = Dimensions.get('window').height;
-        const keyboardHeight = event.endCoordinates.height;
-        const inputContainerHeight = 50; 
-        const availableSpace = screenHeight - keyboardHeight - inputContainerHeight;
-        const messagesHeight = messages.length * 50; 
-        const margin = Math.max(availableSpace - messagesHeight, 0);
-        setInputContainerMargin(margin);
+        inputContainerBottomMarginRef.current = event.endCoordinates.height;
       }
     );
 
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
-        setInputContainerMargin(0);
+        inputContainerBottomMarginRef.current = 0;
       }
     );
 
@@ -85,7 +79,7 @@ const ChatScreen = ({ route }) => {
 
   const sendMessage = () => {
     if (!message.trim()) {
-      return; 
+      return;
     }
 
     if (socket) {
@@ -93,7 +87,7 @@ const ChatScreen = ({ route }) => {
         userId: userData._id,
         name: userData.userName,
         time: new Date().toLocaleTimeString(),
-        message: message.trim(), 
+        message: message.trim(),
       };
 
       socket.emit('chat message', roomId, chatMessage);
@@ -106,7 +100,7 @@ const ChatScreen = ({ route }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : null}
       style={{ flex: 1 }}
     >
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, padding:10, marginBottom:'10%'}}>
         <FlatList
           data={messages}
           renderItem={({ item }) => (
@@ -125,12 +119,7 @@ const ChatScreen = ({ route }) => {
           inverted={true}
         />
       </View>
-      <View
-        style={[
-          styles.inputContainer,
-          { marginBottom: inputContainerMargin },
-        ]}
-      >
+      <View style={[styles.inputContainer ]}>
         <TextInput
           style={styles.input}
           onChangeText={(text) => setMessage(text)}
@@ -147,7 +136,7 @@ const ChatScreen = ({ route }) => {
 const styles = StyleSheet.create({
   messageContainer: {
     maxWidth: '80%',
-    padding: 10,
+    padding: 5,
     borderRadius: 8,
     marginVertical: 4,
   },
@@ -178,19 +167,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 8,
+    padding: 2,
     backgroundColor: '#FFF',
     borderTopWidth: 1,
     borderTopColor: '#DDD',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   input: {
     flex: 1,
-    height: 40,
+    height: 50,
     borderColor: 'gray',
     borderWidth: 1,
     marginRight: 8,
     padding: 8,
     color: 'black',
+    borderRadius:10,
   },
 });
 

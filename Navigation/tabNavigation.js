@@ -16,7 +16,7 @@ export default function TabNavigation({ route }) {
         component={ChatScreen}
         initialParams={{ roomData: roomData }}
       />
-      <Tab.Screen name="AI Bot" component={AiBotScreen} />
+      {/* <Tab.Screen name="AI Bot" component={AiBotScreen} /> */}
     </Tab.Navigator>
   );
 }

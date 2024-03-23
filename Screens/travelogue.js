@@ -6,6 +6,7 @@ import Search from "../Components/search";
 import userStore from "../MobX/userStore";
 import { observer } from "mobx-react";
 import Loading from "../Components/loading";
+import LocationPermissionsComponent from "../Components/getLocation";
 
 const Travelogue = ({ navigation }) => {
   const [areas, setAreas] = useState([]);
@@ -53,6 +54,8 @@ const Travelogue = ({ navigation }) => {
       ) : (
         <>
         <Search />
+        <View style={{}}>
+        </View>
         <FlatList
           data={areas}
           renderItem={renderItems}

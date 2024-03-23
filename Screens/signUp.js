@@ -63,12 +63,14 @@ const SignUp = ({ navigation }) => {
         setError('Name should be at least 3 characters long.');
         return;
       }
-  
+
+
       const response = await axios.post(`${apiUrl}/signup`, {
         userName: name,
         userEmail: email,
-        userPassword: password,
+        userPassword: password, 
       });
+
   
       console.log('Sign Up Response:', response.data);
       const userData = JSON.stringify(response.data)

@@ -8,9 +8,9 @@ import JoinRooms from '../Screens/joinRooms';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react-lite';
+import CurrentLocation from '../Components/getLocation';
 
 const Tab = createBottomTabNavigator();
-
 const BottomTab = ({ navigation }) => {
   const [userData, setUserData] = useState(null);
 
@@ -46,7 +46,7 @@ const BottomTab = ({ navigation }) => {
             </View>
             <View style={styles.textContainer}>
               <Text style={styles.name}>{userStore.user.userInfo.userName}</Text>
-              <Text style={styles.name}>{'📍 Loading...'}</Text>
+              <CurrentLocation/>
             </View>
           </TouchableOpacity>
           </View>

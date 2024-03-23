@@ -1,4 +1,4 @@
-package com.nomad
+package com.techsatish4u.nomad
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

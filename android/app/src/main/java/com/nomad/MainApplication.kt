@@ -1,4 +1,4 @@
-package com.nomad
+package com.techsatish4u.nomad
 
 import android.app.Application
 import com.facebook.react.PackageList

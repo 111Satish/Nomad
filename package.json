@@ -1,6 +1,6 @@
 {
-  "name": "Nomad",
-  "version": "1.0.0",
+  "name": "techsatish4u.Nomad",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -12,6 +12,8 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.21.0",
     "@react-native-community/datetimepicker": "^7.6.2",
+    "@react-native-community/geolocation": "^3.2.0",
+    "@react-native-community/netinfo": "^11.3.1",
     "@react-native-picker/picker": "^2.6.1",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/drawer": "^6.6.6",
@@ -24,9 +26,11 @@
     "mobx-react": "^9.1.0",
     "react": "18.2.0",
     "react-native": "0.73.4",
+    "react-native-bcrypt": "^2.4.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "^2.15.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-pager-view": "^6.2.3",
     "react-native-rating": "^2.0.4",

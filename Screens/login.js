@@ -35,7 +35,7 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      setIsLoading(true); // Start loading
+      setIsLoading(true); 
 
       const response = await axios.post(`${apiUrl}/login`, {
         userEmail: email,
