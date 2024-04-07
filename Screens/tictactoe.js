@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const TicTacToe = () => {
+  const navigation = useNavigation();
   const [grid, setGrid] = useState(Array(9).fill(null));
   const [currentPlayer, setCurrentPlayer] = useState('X');
   const [winner, setWinner] = useState(null);
@@ -54,7 +56,7 @@ const TicTacToe = () => {
   const renderSquare = (index) => {
     return (
       <TouchableOpacity
-        key={index} // Add key prop here
+        key={index} 
         style={[
           styles.square,
           {
@@ -71,6 +73,9 @@ const TicTacToe = () => {
   
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={()=>navigation.navigate('Splash')}>
+        <Text style={styles.internet}>You are offline! Check for internet.</Text>
+      </TouchableOpacity>
       <Text style={styles.title}>Tic-Tac-Toe</Text>
       <View style={styles.grid}>
         {grid.map((value, index) => renderSquare(index))}
@@ -79,7 +84,7 @@ const TicTacToe = () => {
         {winner ? (
           <Text style={{ color: winner === 'X' ? '#FF6347' : '#4682B4' }}>Player {winner} wins!</Text>
         ) : (
-          `Next Player: ${currentPlayer}`
+          <Text style={styles.squareText}>Next Player: {currentPlayer}</Text>
         )}
       </Text>
       {(winner || !grid.includes(null)) && (
@@ -95,19 +100,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#1E1E1E', // Futuristic background color
+    backgroundColor: '#1E1E1E',
+    alignSelf:'center'
   },
   title: {
-    fontSize: 36,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#FFF', // White color for text
+    color: '#FFF', 
+  },
+  internet:{
+    marginTop:20,
+    fontSize: 20,
+    fontWeight:'bold',
+    color:'red',
+    marginBottom: 20,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center', 
     marginBottom: 20,
+    alignSelf: 'center',
+    alignItems: 'center'
   },
   square: {
     width: 100,
@@ -115,11 +130,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderRadius: 10, // Rounded corners for a futuristic look
+    borderRadius: 10, 
   },
   squareText: {
     fontSize: 48,
-    color: '#FFF', // White color for text
+    color: '#FFF', 
   },
   status: {
     fontSize: 20,

@@ -4,7 +4,8 @@ import { Picker } from '@react-native-picker/picker';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import { apiUrl } from '../App';
-
+import getColorScheme from '../Utils/colorsSchema';
+const colors = getColorScheme();
 const FeedbackScreen = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [feedbackText, setFeedbackText] = useState('');
@@ -41,7 +42,7 @@ const FeedbackScreen = () => {
 
   return (
     <LinearGradient
-      colors={['#3498db', '#1abc9c']}
+      colors={[colors.primary, colors.background]}
       style={styles.gradientContainer}
     >
       <View style={styles.container}>
@@ -65,12 +66,13 @@ const FeedbackScreen = () => {
 
         <View style={styles.textAreaContainer}>
           <TextInput
-            style={styles.textArea}
+            style={styles.textInput}
             placeholder="Write your feedback here..."
             multiline
             numberOfLines={5}
             value={feedbackText}
             onChangeText={(text) => setFeedbackText(text)}
+            placeholderTextColor={colors.secondaryText}
           />
         </View>
 
@@ -121,51 +123,52 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#fff',
+    color: colors.text,
   },
   dropdownContainer: {
-    borderRadius:50,
+    borderRadius:10,
     marginBottom: 20,
     width: '80%',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 10,
+    backgroundColor: colors.inputArea,
   },
   dropdown: {
     borderRadius:50,
     height: 50,
     width: '100%',
-    color: '#333',
+    color: colors.text,
   },
   textAreaContainer: {
     marginBottom: 20,
     width: '80%',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: colors.inputArea,
     borderRadius: 10,
   },
-  textArea: {
+  textInput: {
     height: 100,
     padding: 10,
     textAlignVertical: 'top',
-    color: '#333',
+    color: colors.text,
   },
   submitButton: {
-    backgroundColor: '#2ecc71',
+    backgroundColor: colors.button,
     padding: 15,
     borderRadius: 10,
+    width:250
   },
   submitButtonText: {
-    color: 'white',
+    color: colors.text,
     fontSize: 18,
     textAlign: 'center',
+    fontWeight:'bold'
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: colors.background,
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
@@ -173,11 +176,11 @@ const styles = StyleSheet.create({
   modalMessage: {
     fontSize: 18,
     marginBottom: 20,
-    color:'black'
+    color:colors.secondaryText
   },
   closeButton: {
     fontSize: 16,
-    color: '#2ecc71',
+    color: colors.button,
   },
 });
 

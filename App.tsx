@@ -17,6 +17,15 @@ import Profile from './Screens/profile';
 import TabNavigation from './Navigation/tabNavigation';
 import RoomDetailsScreen from './Screens/roomDetailsScreen';
 import TicTacToe from './Screens/tictactoe';
+import getColorScheme from './Utils/colorsSchema';
+import Icon from 'react-native-vector-icons/AntDesign';
+import UpdateTripScreen from './Screens/updateTrip';
+import TripDetailsScreen from './Screens/trip';
+import ExpenseDetails from './Screens/expenseDetails';
+import SettleUp from './Screens/setlleUp';
+import SettleAmount from './Screens/settleAmount';
+import Expenses from './Screens/expenses';
+const colors = getColorScheme();
 
 const apiUrl = 'https://nomadbackend.azurewebsites.net';
 //const apiUrl = 'http://10.2.106.243:5000'
@@ -33,7 +42,7 @@ const CustomHeader = () => {
   return (
     <View style={styles.headerContainer}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={styles.back}>{`<`}</Text>
+        <Icon name="arrowleft" size={30} color={colors.text} />
       </TouchableOpacity>
       <Text style={styles.headerText}>{roomData.roomName}</Text>
     </View>
@@ -69,16 +78,119 @@ const App = () => {
           component={ChatScreen}
           options={{headerShown: true}}
         />
-        <Stack.Screen name="Feedback" component={FeedbackScreen} />
-        <Stack.Screen name="Edit Profile" component={EditProfile} />
-        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen
+          name="Feedback"
+          component={FeedbackScreen}
+          options={{
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.text,
+          }}
+        />
+
+        <Stack.Screen
+          name="Edit Profile"
+          component={EditProfile}
+          options={{
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.text,
+          }}
+        />
+
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.text,
+          }}
+        />
         <Stack.Screen
           name="TabNavigation"
           component={TabNavigation}
           options={{header: props => <CustomHeader {...props} />}}
         />
-        <Stack.Screen name="Room Details" component={RoomDetailsScreen} />
-        <Stack.Screen name="TicTacToe" component={TicTacToe} /> 
+        <Stack.Screen
+          name="Room Details"
+          component={RoomDetailsScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen 
+        name="TicTacToe" 
+        component={TicTacToe}
+        options={{
+          headerStyle: {
+            backgroundColor: colors.primary,
+          },
+          headerTintColor: colors.text,
+        }} 
+        />
+        <Stack.Screen
+          name='Update Plan'
+          component={UpdateTripScreen}
+          options={{
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.text,
+          }}
+        />
+        <Stack.Screen
+        name="Trip"
+        component={TripDetailsScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: colors.primary,
+          },
+          headerTintColor: colors.text,
+        }}
+        />
+
+        <Stack.Screen
+        name="Expense Details"
+        component={ExpenseDetails}
+        options={{
+          headerStyle: {
+            backgroundColor: colors.primary,
+          },
+          headerTintColor: colors.text,
+        }}
+        />
+        <Stack.Screen
+        name="Settle Up"
+        component={SettleUp}
+        options={{
+          headerStyle: {
+            backgroundColor: colors.primary,
+          },
+          headerTintColor: colors.text,
+        }}
+        />
+        <Stack.Screen
+        name="Settle Amount"
+        component={SettleAmount}
+        options={{
+          headerStyle: {
+            backgroundColor: colors.primary,
+          },
+          headerTintColor: colors.text,
+        }}
+        />
+        <Stack.Screen
+        name="Expenses"
+        component={Expenses}
+        options={{
+          headerStyle: {
+            backgroundColor: colors.primary,
+          },
+          headerTintColor: colors.text,
+        }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -87,18 +199,21 @@ const App = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
-    backgroundColor: '#eee',
-    padding: 5,
+    backgroundColor: colors.primary,
+    padding: 10,
+    color: colors.primary,
+    height: 50,
   },
   headerText: {
     marginLeft: 20,
     fontSize: 18,
-    color: 'black',
+    color: colors.text,
     textAlign: 'center',
     verticalAlign: 'middle',
+    fontWeight: 'bold',
   },
   back: {
-    color: 'black',
+    color: colors.text,
     alignItems: 'flex-start',
     fontSize: 30,
     fontWeight: '900',

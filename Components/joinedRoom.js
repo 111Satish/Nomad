@@ -4,6 +4,10 @@ import StarRating from "./rating";
 import userStore from "../MobX/userStore";
 import { useNavigation } from '@react-navigation/native';
 import { observer } from "mobx-react";
+import getColorScheme from "../Utils/colorsSchema";
+import Icon from 'react-native-vector-icons/FontAwesome'
+import LinearGradient from 'react-native-linear-gradient';
+const colors = getColorScheme();
 
 const JoinedRoom = ({ roomData }) => {
     const navigation = useNavigation();
@@ -57,12 +61,26 @@ const JoinedRoom = ({ roomData }) => {
     };
 
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('TabNavigation', { roomData: roomData })}>
 
-            <View style={styles.container}>
-                <Text style={styles.name}>
-                    {roomData.roomName}
-                </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Room Details', { roomData: roomData })}>
+            <LinearGradient
+                colors={[colors.primary, colors.background]}
+                style={styles.container}
+            >
+                <View style={{ flexDirection: 'row' }}>
+                    <View style={{ width: '85%' }}>
+                        <Text style={styles.name}>{roomData.roomName}</Text>
+                    </View>
+                    {isJoined ? (
+                        <TouchableOpacity onPress={confirmLeaveRoom} style={styles.leaveButton}>
+                            <Icon name='share-square-o' size={30} color={'red'} />
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity onPress={handleJoinRoom} style={styles.joinButton}>
+                            <Text style={styles.buttonText}>Join</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
                 <View style={styles.imageContainer}>
                     <Image
                         style={styles.image}
@@ -76,18 +94,18 @@ const JoinedRoom = ({ roomData }) => {
                     <Text style={styles.descrip} numberOfLines={5}>
                         {roomData.description}
                     </Text>
-
                     {isJoined ? (
-                        <TouchableOpacity onPress={confirmLeaveRoom} style={styles.leaveButton}>
-                            <Text style={styles.buttonText}>Leave</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('TabNavigation', { roomData: roomData })} style={styles.leaveButton}>
+                            <Icon name='comments' size={30} color={colors.button} />
                         </TouchableOpacity>
                     ) : (
                         <TouchableOpacity onPress={handleJoinRoom} style={styles.joinButton}>
                             <Text style={styles.buttonText}>Join</Text>
                         </TouchableOpacity>
                     )}
+
                 </View>
-            </View>
+            </LinearGradient>
         </TouchableOpacity>
     );
 };
@@ -97,19 +115,18 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         alignContent: 'center',
-        paddingTop: 3,
-        padding: 20,
-        backgroundColor: '#f8f8f8',
+        paddingTop: 5,
+        padding: 15,
         borderRadius: 15,
-        elevation: 5,
-        margin: 3,
+        elevation: 10,
+        margin: 5,
     },
     name: {
         alignSelf: 'center',
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10,
-        color: '#333',
+        color: colors.text,
     },
     imageContainer: {
         alignItems: 'center',
@@ -121,12 +138,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     rating: {
-        backgroundColor: 'rgba(255, 255, 255, 0.7)',
-        padding: 5,
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        padding: 2,
         borderRadius: 8,
         position: 'absolute',
         top: 10,
         right: 10,
+        borderWidth: 1,
+        borderColor: colors.border,
     },
     ratingText: {
         fontSize: 16,
@@ -140,16 +159,16 @@ const styles = StyleSheet.create({
     descrip: {
         flex: 1,
         fontSize: 20,
-        color: '#555',
+        color: colors.text,
     },
     joinButton: {
-        backgroundColor: '#3498db',
+        backgroundColor: colors.button,
         borderRadius: 10,
         paddingVertical: 10,
         paddingHorizontal: 15,
     },
     buttonText: {
-        color: '#fff',
+        color: colors.text,
         fontSize: 18,
         fontWeight: 'bold',
     },
@@ -158,10 +177,10 @@ const styles = StyleSheet.create({
     },
 
     leaveButton: {
-        backgroundColor: 'red',
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 15,
+        // backgroundColor: colors.highlight,
+        borderRadius: 5,
+        paddingVertical: 5,
+        paddingHorizontal: 8,
         marginTop: 10,
     },
 });

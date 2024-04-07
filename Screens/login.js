@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react';
 import { apiUrl } from '../App';
 import Loading from '../Components/loading';
+import getColorScheme from '../Utils/colorsSchema';
+const colors = getColorScheme();
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -35,7 +38,7 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      setIsLoading(true); 
+      setIsLoading(true);
 
       const response = await axios.post(`${apiUrl}/login`, {
         userEmail: email,
@@ -47,22 +50,8 @@ const Login = ({ navigation }) => {
       });
 
       if (response.status !== 200) {
-        const errorData = await response.json();
-        let errorMessage = 'Login failed';
-
-        switch (response.status) {
-          case 401:
-            errorMessage = 'Invalid email or password';
-            break;
-          case 404:
-            errorMessage = 'User not found';
-            break;
-          default:
-            errorMessage = errorData.error || errorMessage;
-        }
-
-        setError(errorMessage);
-        setIsLoading(false); 
+        setError('Login failed');
+        setIsLoading(false);
         return;
       }
 
@@ -72,9 +61,22 @@ const Login = ({ navigation }) => {
       navigation.replace('BottomTab');
 
     } catch (error) {
+      setIsLoading(false);
+      if (error.response) {
+        switch (error.response.status) {
+          case 401:
+            setError('Invalid email or password');
+            break;
+          case 404:
+            setError('User not found');
+            break;
+          default:
+            setError('An error occurred');
+        }
+      } else {
+        setError('An error occurred');
+      }
       console.error(error);
-      setError('An error occurred. Please try again later.');
-      setIsLoading(false); 
     }
   };
 
@@ -86,28 +88,34 @@ const Login = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.title}>Nomad</Text>
 
-        {isLoading ? ( 
-          <Loading/>
+        {isLoading ? (
+          <Loading />
         ) : (
           <>
-            <TextInput
-              style={[styles.input, !isEmailValid(email) && styles.invalidInput]}
-              placeholder="Email"
-              placeholderTextColor="#fff"
-              value={email}
-              onChangeText={(text) =>setEmail(text.toLowerCase().trim())}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor={colors.secondaryText}
+                value={email}
+                onChangeText={(text) => setEmail(text.toLowerCase().trim())}
+                autoCapitalize="none"
+                keyboardType="email-address"
+              />
+              {isEmailValid(email) && <Icon name="check-circle" size={20} color="green" style={styles.icon} />}
+            </View>
 
-            <TextInput
-              style={[styles.input, !isPasswordValid(password) && styles.invalidInput]}
-              placeholder="Password"
-              placeholderTextColor="#fff"
-              value={password}
-              onChangeText={(text) =>setPassword(text.trim())}
-              secureTextEntry
-            />
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor={colors.secondaryText}
+                value={password}
+                onChangeText={(text) => setPassword(text.trim())}
+                secureTextEntry
+              />
+              {isPasswordValid(password) && <Icon name="check-circle" size={20} color="green" style={styles.icon} />}
+            </View>
 
             <TouchableOpacity
               style={[styles.loginButton, isEmailValid(email) && isPasswordValid(password) && styles.validForm]}
@@ -124,7 +132,7 @@ const Login = ({ navigation }) => {
             </TouchableOpacity>
           </>
         )}
-        
+
         <Text style={styles.errorText}>{error}</Text>
       </View>
     </ImageBackground>
@@ -149,45 +157,61 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 30,
   },
-  input: {
-    width: 200,
-    height: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  inputContainer: {
+    position: 'relative',
     marginBottom: 10,
-    color: '#fff',
+    alignItems:'center'
+  },
+  input: {
+    width: 270,
+    height: 50,
+    backgroundColor: colors.inputArea,
+    marginBottom: 5,
+    color: colors.text,
     paddingHorizontal: 10,
     borderRadius: 20,
-  },
-  invalidInput: {
-    borderColor: 'red',
     borderWidth: 1,
+    borderColor: colors.border,
+    fontSize:18,
   },
   loginButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: colors.background,
+    paddingVertical: 8,
     borderRadius: 20,
     marginTop: 10,
+    width: 270,
+    height:50,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   buttonText: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 18,
     fontWeight: 'bold',
+    alignSelf: 'center'
   },
   validForm: {
-    backgroundColor: '#00bcd4',
+    backgroundColor: colors.button,
   },
   signup: {
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: colors.background,
     paddingLeft: 5,
     paddingRight: 5,
-    color: 'blue',
+    color: colors.secondaryText,
     margin: 10,
     borderRadius: 20,
   },
   errorText: {
-    color: 'red',
+    backgroundColor: colors.background,
+    color: colors.highlight,
     marginBottom: 10,
+    paddingHorizontal:5,
+    borderRadius:10,
+  },
+  icon: {
+    position: 'absolute',
+    right: 10,
+    top: 15,
   },
 });
 

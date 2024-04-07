@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import getColorScheme from '../Utils/colorsSchema';
+const colors = getColorScheme();
 const StarRating = ({ rating }) => {
-  // Ensure that rating is within valid range (0 to 5)
   const normalizedRating = Math.max(0, Math.min(rating, 5));
   
   const filledStars = Math.floor(normalizedRating);
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   ratingText: {
     marginLeft: 5,
     fontSize: 16,
-    color: '#555',
+    color: colors.text,
   },
 });
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-
+import getColorScheme from '../Utils/colorsSchema';
+const colors = getColorScheme();
 const Search = () => {
     //{ onSearch }
 //   const [searchText, setSearchText] = useState('');
@@ -15,7 +16,7 @@ const Search = () => {
       <TextInput
         style={styles.input}
         placeholder="Search..."
-        placeholderTextColor="#999"
+        placeholderTextColor={colors.secondaryText}
         // onChangeText={(text) => setSearchText(text)}
         // value={searchText}
       />
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#eee',
+    backgroundColor: colors.background,
     borderRadius: 45,
     paddingVertical: 2,
     paddingHorizontal: 25,
@@ -37,17 +38,19 @@ const styles = StyleSheet.create({
     margin:10,
     width:'90%',
     alignSelf:'center',
+    borderColor: colors.border,
   },
   input: {
     padding:2,
     flex: 1,
     height: 30,
-    color: '#333',
+    color: colors.text,
   },
   searchButton: {
     borderRadius: 10,
     marginLeft: 5,
     padding: 1,
+    color:colors.secondaryText
   },
 });
 

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Room from '../Components/joinedRoom';
 import Search from '../Components/search';
 import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react';
-import Loading from '../Components/loading';
+import getColorScheme from '../Utils/colorsSchema';
+import LinearGradient from 'react-native-linear-gradient';
+const colors = getColorScheme();
 
 const JoinedRooms = ({ navigation }) => {
   const [roomsData, setRoomsData] = useState([]);
@@ -37,24 +39,42 @@ const JoinedRooms = ({ navigation }) => {
   };
 
   if (loading)
-    return <Loading />;
-  
+    return (
+      <LinearGradient
+        colors={[colors.primary, colors.background]}
+        style={{ flex: 1, paddingHorizontal: 30 }}
+      >
+        <View style={{ flex: 1, marginTop: 20 }}>
+          <ActivityIndicator size="large" color={colors.text} />
+        </View>
+      </LinearGradient>
+    )
+
   if (userJoinedRooms.length < 1)
     return (
-      <View style={{ padding: 10, alignContent: 'center', paddingTop:20 }}>
-        <Text style={{ color: 'black', fontSize:18, alignSelf:'center' }}>You haven't joined any room.</Text>
-      </View>
+      <LinearGradient
+        colors={[colors.primary, colors.background]}
+        style={{ flex: 1, paddingHorizontal: 30 }}
+      >
+        <View style={{ flex: 1, padding: 10, alignContent: 'center', paddingTop: 20 }}>
+          <Text style={{ color: colors.text, fontSize: 18, alignSelf: 'center' }}>You haven't joined any room.</Text>
+        </View>
+      </LinearGradient>
     );
   else {
     return (
-      <View style={{ marginBottom: '10%' }}>
-        <Search />
-        <FlatList
-          data={userJoinedRooms}
-          renderItem={renderItems}
-          keyExtractor={(item) => item._id}
-        />
-      </View>
+      <LinearGradient
+        colors={[colors.primary, colors.background]}
+        style={{ flex: 1, paddingHorizontal: 10 }}
+      >
+        <View style={{ flex: 1 }}>
+          <FlatList
+            data={userJoinedRooms}
+            renderItem={renderItems}
+            keyExtractor={(item) => item._id}
+          />
+        </View>
+      </LinearGradient>
     );
   }
 };

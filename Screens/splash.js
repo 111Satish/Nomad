@@ -5,7 +5,9 @@ import { observer } from 'mobx-react';
 import userStore from '../MobX/userStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
-import TicTacToe from './tictactoe'; 
+import TicTacToe from './tictactoe';
+import getColorScheme from '../Utils/colorsSchema';
+const colors = getColorScheme();
 
 const Splash = ({ navigation }) => {
   const [token, setToken] = useState(null);
@@ -71,7 +73,7 @@ const Splash = ({ navigation }) => {
 
   return (
     <LinearGradient
-      colors={['#15436e', '#01020f']}
+      colors={[colors.primary, colors.background]}
       style={styles.container}
     >
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
   },
   tag: {
     marginTop: 15,
-    color: 'yellow',
+    color: '#F49C05',
     fontWeight: 'bold',
   },
 });

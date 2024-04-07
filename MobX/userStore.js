@@ -79,7 +79,7 @@ class UserStore {
   async loadRoomFromBackend() {
     try {
       console.log('is getting Data')
-      const response = await axios.post(`${apiUrl}/getRoom`);
+      const response = await axios.get(`${apiUrl}/getRoom`);
       this.room = response.data;
       console.log("Room  data Checking")
       console.log(this.room);

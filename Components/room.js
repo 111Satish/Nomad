@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon2 from 'react-native-vector-icons/MaterialIcons'
 import StarRating from './rating';
 import userStore from '../MobX/userStore';
 import { observer } from 'mobx-react';
+import getColorScheme from '../Utils/colorsSchema';
+import LinearGradient from 'react-native-linear-gradient';
+const colors = getColorScheme();
 
 const Room = ({ roomData }) => {
   const navigation = useNavigation();
@@ -35,29 +40,41 @@ const Room = ({ roomData }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={()=>navigation.navigate('Room Details', { roomData: roomData })}>
-      <Text style={styles.name}>{roomData.roomName}</Text>
-      <View style={styles.imageContainer}>
-        <Image style={styles.image} source={{ uri: roomData.imageUrl }} />
-        <View style={styles.rating}>
-          <StarRating rating={roomData.rating} />
-        </View>
-      </View>
-      <View style={styles.bottomContainer}>
-        <Text style={styles.descrip} numberOfLines={5}>
-          {roomData.description}
-        </Text>
-        <TouchableOpacity
-          onPress={isJoined ? null : handleJoinRoom}
-          style={[styles.joinButton, isJoined && styles.joinedButton]}
-          disabled={isJoined}
-        >
-          <Text style={styles.buttonText}>{isJoined ? 'Joined' : 'Join'}</Text>
+    <LinearGradient
+      colors={[colors.primary, colors.background]}
+      style={styles.container}
+    >
+        <TouchableOpacity onPress={() => navigation.navigate('Room Details', { roomData: roomData })}>
+          <Text style={styles.name}>{roomData.roomName}</Text>
+          <View style={styles.imageContainer}>
+            <Image style={styles.image} source={{ uri: roomData.imageUrl }} />
+            <View style={styles.rating}>
+              <StarRating rating={roomData.rating} />
+            </View>
+          </View>
+          <View style={styles.bottomContainer}>
+            <Text style={styles.descrip} numberOfLines={5}>
+              {roomData.description}
+            </Text>
+            <TouchableOpacity
+              onPress={isJoined ? null : handleJoinRoom}
+              style={[styles.joinButton, isJoined && styles.joinedButton]}
+              disabled={isJoined}
+            >
+              <Text style={styles.buttonText}>
+                {isJoined ?
+                  <View>
+                    <Icon2 name='library-add-check' size={30} color={colors.button} />
+                  </View>
+                  :
+                  <View>
+                    <Icon2 name='add-to-photos' size={30} color={colors.button} />
+                  </View>}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
-      </View>
-      </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -66,19 +83,18 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignContent: 'center',
-    paddingTop: 3,
-    padding: 20,
-    backgroundColor: '#f8f8f8',
+    paddingTop: 7,
+    padding: 15,
     borderRadius: 15,
-    elevation: 5,
-    margin: 3,
+    elevation: 10,
+    margin: 5,
   },
   name: {
     alignSelf: 'center',
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: colors.text,
   },
   imageContainer: {
     alignItems: 'center',
@@ -90,12 +106,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   rating: {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    padding: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    padding: 2,
     borderRadius: 8,
     position: 'absolute',
     top: 10,
     right: 10,
+    borderWidth: 1,
+    borderColor: colors.border
   },
   bottomContainer: {
     flexDirection: 'row',
@@ -104,22 +122,20 @@ const styles = StyleSheet.create({
   },
   descrip: {
     flex: 1,
-    fontSize: 20,
-    color: '#555',
+    fontSize: 18,
+    color: colors.text,
   },
   joinButton: {
-    backgroundColor: '#3498db',
+    // backgroundColor: colors.button,
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
   },
   buttonText: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 18,
     fontWeight: 'bold',
   },
-  joinedButton: {
-    backgroundColor: 'green',
-  },
+
 });
 export default observer(Room);

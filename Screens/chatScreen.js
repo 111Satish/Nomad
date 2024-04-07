@@ -15,6 +15,9 @@ import io from 'socket.io-client';
 import userStore from '../MobX/userStore';
 import axios from 'axios';
 import { apiUrl } from '../App';
+import LinearGradient from 'react-native-linear-gradient';
+import getColorScheme from '../Utils/colorsSchema';
+const colors = getColorScheme();
 
 const ChatScreen = ({ route }) => {
   const { roomData } = route.params;
@@ -96,40 +99,46 @@ const ChatScreen = ({ route }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : null}
+    <LinearGradient
+      colors={[colors.primary, colors.background]}
       style={{ flex: 1 }}
     >
-      <View style={{ flex: 1, padding:10, marginBottom:'10%'}}>
-        <FlatList
-          data={messages}
-          renderItem={({ item }) => (
-            <View
-              style={[
-                styles.messageContainer,
-                item.userId === userData._id ? styles.sentMessage : styles.receivedMessage,
-              ]}
-            >
-              <Text style={styles.name}>~{item.name}</Text>
-              <Text style={styles.messageText}>{item.message}</Text>
-              <Text style={styles.messageTime}>{item.time}</Text>
-            </View>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          inverted={true}
-        />
-      </View>
-      <View style={[styles.inputContainer ]}>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => setMessage(text)}
-          value={message}
-          placeholder="Type your message..."
-          multiline={true}
-        />
-        <Button title="Send" onPress={sendMessage} />
-      </View>
-    </KeyboardAvoidingView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        style={{ flex: 1 }}
+      >
+        <View style={{ flex: 1, padding: 10, marginBottom: '10%' }}>
+          <FlatList
+            data={messages}
+            renderItem={({ item }) => (
+              <View
+                style={[
+                  styles.messageContainer,
+                  item.userId === userData._id ? styles.sentMessage : styles.receivedMessage,
+                ]}
+              >
+                <Text style={styles.name}>~{item.name}</Text>
+                <Text style={styles.messageText}>{item.message}</Text>
+                <Text style={styles.messageTime}>{item.time}</Text>
+              </View>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            inverted={true}
+          />
+        </View>
+        <View style={[styles.inputContainer]}>
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => setMessage(text)}
+            value={message}
+            placeholder="Type your message..."
+            multiline={true}
+            placeholderTextColor={colors.secondaryText}
+          />
+          <Button title="Send" onPress={sendMessage} />
+        </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 
@@ -142,24 +151,24 @@ const styles = StyleSheet.create({
   },
   sentMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#DCF8C6',
+    backgroundColor: colors.primary,
   },
   receivedMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#FFF',
+    backgroundColor: colors.background,
   },
   messageText: {
     fontSize: 16,
-    color: '#333',
+    color: colors.text,
   },
   name: {
     fontSize: 16,
-    color: '#333',
+    color: colors.secondaryText,
     fontWeight: 'bold',
   },
   messageTime: {
     fontSize: 12,
-    color: '#888',
+    color: colors.secondaryText,
     marginTop: 5,
     textAlign: 'right',
   },
@@ -168,9 +177,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 2,
-    backgroundColor: '#FFF',
+    backgroundColor: colors.inputArea,
     borderTopWidth: 1,
-    borderTopColor: '#DDD',
+    borderTopColor: colors.border,
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -179,12 +188,12 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: 50,
-    borderColor: 'gray',
+    borderColor: colors.border,
     borderWidth: 1,
     marginRight: 8,
     padding: 8,
-    color: 'black',
-    borderRadius:10,
+    color: colors.text,
+    borderRadius: 10,
   },
 });
 

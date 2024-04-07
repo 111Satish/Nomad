@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { PermissionsAndroid, Platform, Alert, Linking, View, Text } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
+import getColorScheme from '../Utils/colorsSchema';
+const colors = getColorScheme();
 
 const CurrentLocation = () => {
   const [latitude, setLatitude] = useState(0);
@@ -28,7 +30,6 @@ const CurrentLocation = () => {
 
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           console.log('Location permission granted');
-          // Now you can get the location
           getCurrentLocation();
         } else if (granted === PermissionsAndroid.RESULTS.DENIED) {
           console.log('Location permission denied');
@@ -58,7 +59,6 @@ const CurrentLocation = () => {
   };
 
   const getCurrentLocation = async () => {
-    // Get the current position
     Geolocation.getCurrentPosition(
       position => {
         const { latitude, longitude } = position.coords;
@@ -94,7 +94,7 @@ const CurrentLocation = () => {
 
   return (
     <View>
-      <Text style={{color:'black'}}>{currLocation}</Text>
+      <Text style={{color:colors.secondaryText}}>{currLocation}</Text>
     </View>
   );
 };

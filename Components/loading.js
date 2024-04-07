@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-
+import getColorScheme from '../Utils/colorsSchema';
+const colors = getColorScheme();
 const Loading = () => {
   const [isVisible, setIsVisible] = useState([true, false, false]);
 
@@ -37,7 +38,7 @@ const Loading = () => {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#fff',
+      backgroundColor: colors.background,
     },
     bandsContainer: {
       position: 'absolute',
