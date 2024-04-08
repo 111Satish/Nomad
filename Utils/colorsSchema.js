@@ -27,7 +27,7 @@ const darkColors = {
 
 const getColorScheme = () => {
   const colorScheme = Appearance.getColorScheme();
-  return colorScheme === 'light' ? darkColors : lightColors;
+  return colorScheme === 'dark' ? darkColors : lightColors;
 };
 
 const ColorSchemeToggle = () => {

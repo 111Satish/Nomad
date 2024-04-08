@@ -98,83 +98,84 @@ const Expenses = ({ route }) => {
     );
 
     return (
-        <ScrollView style={styles.container}>
             <LinearGradient
                 colors={[colors.primary, colors.background]}
-                style={{ flex: 1, paddingHorizontal: 30 }}
+                style={{ flex: 1 }}
             >
-                <View>
-                    <Text style={styles.title}>{trip.name}</Text>
-                </View>
-
-                <View style={styles.line}></View>
-                <TouchableOpacity onPress={() => navigation.navigate('Settle Up', { trip: trip })}>
-                    <Text style={styles.link}>{'Settle Up -->'}</Text>
-                </TouchableOpacity>
-
-                <FlatList
-                    data={expenses}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => navigation.navigate('Expense Details', { expense: item })}>
-                            <View style={styles.expenseItem}>
-                                <Text style={styles.subtitle}>Notes: {item.notes}</Text>
-                                <Text style={styles.subtitle}>Date: {item.date.split('T')[0]}</Text>
-                                <Text style={styles.subtitle}>Amount: ₹{item.amount}</Text>
-                                <Text style={styles.subtitle}>Paid By: {item.paidby}</Text>
-                            </View>
+                <ScrollView style={styles.container}>
+                    <View style={{ paddingHorizontal: 30 }}>
+                        <View>
+                            <Text style={styles.title}>{trip.name}</Text>
+                        </View>
+        
+                        <View style={styles.line}></View>
+                        <TouchableOpacity onPress={() => navigation.navigate('Settle Up', { trip: trip })}>
+                            <Text style={styles.link}>{'Settle Up -->'}</Text>
                         </TouchableOpacity>
-                    )}
-                    keyExtractor={item => item._id.toString()}
-                />
-
-                <Text style={styles.title}>Members</Text>
-                <FlatList style={{ paddingBottom: 20 }}
-                    data={trip.members}
-                    renderItem={({ item }) => (
-                        <Checkbox
-                            label={item.userName}
-                            checked={members.includes(item._id)}
-                            onPress={() => {
-                                if (members.includes(item._id)) {
-                                    setMembers(prevMembers => prevMembers.filter(member => member !== item._id));
-                                } else {
-                                    setMembers(prevMembers => [...prevMembers, item._id]);
-                                }
-                            }}
+        
+                        <FlatList
+                            data={expenses}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity onPress={() => navigation.navigate('Expense Details', { expense: item })}>
+                                    <View style={styles.expenseItem}>
+                                        <Text style={styles.subtitle}>Notes: {item.notes}</Text>
+                                        <Text style={styles.subtitle}>Date: {item.date.split('T')[0]}</Text>
+                                        <Text style={styles.subtitle}>Amount: ₹{item.amount}</Text>
+                                        <Text style={styles.subtitle}>Paid By: {item.paidby}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            )}
+                            keyExtractor={item => item._id.toString()}
                         />
-                    )}
-                    keyExtractor={item => item._id.toString()}
-                />
-                <View style={styles.input}>
-                    <Icon name="align-justify" size={25} color={colors.text} />
-                    <TextInput
-                        style={[styles.amountInput, { fontSize: 18 }]}
-                        placeholder="   notes"
-                        value={notes}
-                        onChangeText={setNotes}
-                        keyboardType=""
-                        placeholderTextColor={colors.secondaryText}
-                    />
-                </View>
-                <View style={styles.input}>
-                    <Text style={styles.currency}>₹</Text>
-                    <TextInput
-                        style={styles.amountInput}
-                        placeholder="  _ _ _"
-                        value={amount}
-                        onChangeText={setAmount}
-                        keyboardType="numeric"
-                        placeholderTextColor={colors.secondaryText}
-                    />
-                </View>
-                <TouchableOpacity style={styles.addButton} onPress={handleAddExpense}>
-                    <Text style={styles.buttonText}>Add Expense</Text>
-                </TouchableOpacity>
+        
+                        <Text style={styles.title}>Members</Text>
+                        <FlatList style={{ paddingBottom: 20 }}
+                            data={trip.members}
+                            renderItem={({ item }) => (
+                                <Checkbox
+                                    label={item.userName}
+                                    checked={members.includes(item._id)}
+                                    onPress={() => {
+                                        if (members.includes(item._id)) {
+                                            setMembers(prevMembers => prevMembers.filter(member => member !== item._id));
+                                        } else {
+                                            setMembers(prevMembers => [...prevMembers, item._id]);
+                                        }
+                                    }}
+                                />
+                            )}
+                            keyExtractor={item => item._id.toString()}
+                        />
+                        <View style={styles.input}>
+                            <Icon name="align-justify" size={25} color={colors.text} />
+                            <TextInput
+                                style={[styles.amountInput, { fontSize: 18 }]}
+                                placeholder="   notes"
+                                value={notes}
+                                onChangeText={setNotes}
+                                keyboardType=""
+                                placeholderTextColor={colors.secondaryText}
+                            />
+                        </View>
+                        <View style={styles.input}>
+                            <Text style={styles.currency}>₹</Text>
+                            <TextInput
+                                style={styles.amountInput}
+                                placeholder="  _ _ _"
+                                value={amount}
+                                onChangeText={setAmount}
+                                keyboardType="numeric"
+                                placeholderTextColor={colors.secondaryText}
+                            />
+                        </View>
+                        <TouchableOpacity style={styles.addButton} onPress={handleAddExpense}>
+                            <Text style={styles.buttonText}>Add Expense</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
             </LinearGradient>
-        </ScrollView>
-    );
-};
-
+        );
+    }     
 const styles = StyleSheet.create({
     container: {
         flex: 1,

@@ -28,6 +28,30 @@ const PlanTripScreen = ({ navigation }) => {
     const [showCalendarDeparture, setShowCalendarDeparture] = useState(false);
     const [showCalendarReturn, setShowCalendarReturn] = useState(false);
 
+    const calendarTheme = {
+        backgroundColor: colors.background,
+        calendarBackground: colors.background,
+        textSectionTitleColor: colors.text,
+        textSectionTitleDisabledColor: colors.secondaryText,
+        selectedDayBackgroundColor: colors.button,
+        selectedDayTextColor: colors.text,
+        todayTextColor: colors.button,
+        dayTextColor: colors.text,
+        textDisabledColor: colors.border,
+        dotColor: colors.button,
+        selectedDotColor: colors.text,
+        arrowColor: colors.button,
+        disabledArrowColor: colors.secondaryText,
+        monthTextColor: colors.text,
+        indicatorColor: colors.button,
+        textDayFontFamily: 'monospace',
+        textMonthFontFamily: 'monospace',
+        textDayHeaderFontFamily: 'monospace',
+        textDayFontSize: 14,
+        textMonthFontSize: 14,
+        textDayHeaderFontSize: 14,
+    };
+
     useEffect(() => {
         const userId = userStore.user.userInfo._id;
         const userInfo = userStore.user.userInfo;
@@ -189,18 +213,17 @@ const PlanTripScreen = ({ navigation }) => {
                     onChangeText={setDestination}
                     placeholderTextColor={colors.secondaryText}
                 />
-                <View style={styles.inputContainer}>
+
+                <TouchableOpacity style={styles.inputContainer} onPress={() => setShowCalendarDeparture(true)}>
                     <TextInput
                         style={styles.inputCal}
                         placeholder="Departure Date"
                         value={departureDate}
-                        onFocus={() => setShowCalendarDeparture(true)}
+                        editable={false}
                         placeholderTextColor={colors.secondaryText}
                     />
-                    <TouchableOpacity style={styles.calendarIcon} onPress={() => setShowCalendarDeparture(true)}>
-                        <Icon name='calendar' size={20} color={colors.button} />
-                    </TouchableOpacity>
-                </View>
+                    <Icon name='calendar' size={20} color={colors.button} />
+                </TouchableOpacity>
                 {showCalendarDeparture && (
                     <Calendar
                         current={departureDate}
@@ -209,24 +232,21 @@ const PlanTripScreen = ({ navigation }) => {
                             setDepartureDate(day.dateString);
                             setShowCalendarDeparture(false);
                         }}
-                        theme={{
-                            // Customize calendar theme if needed
-                        }}
+                        theme={calendarTheme}
+                        style={styles.calendar}
                     />
                 )}
 
-                <View style={styles.inputContainer}>
+                <TouchableOpacity style={styles.inputContainer} onPress={() => setShowCalendarReturn(true)}>
                     <TextInput
                         style={styles.inputCal}
                         placeholder="Returning Date"
                         value={returnDate}
-                        onFocus={() => setShowCalendarReturn(true)}
+                        editable={false}
                         placeholderTextColor={colors.secondaryText}
                     />
-                    <TouchableOpacity style={styles.calendarIcon} onPress={() => setShowCalendarReturn(true)}>
-                        <Icon name='calendar' size={20} color={colors.button} />
-                    </TouchableOpacity>
-                </View>
+                    <Icon name='calendar' size={20} color={colors.button} />
+                </TouchableOpacity>
                 {showCalendarReturn && (
                     <Calendar
                         current={returnDate}
@@ -235,14 +255,13 @@ const PlanTripScreen = ({ navigation }) => {
                             setReturnDate(day.dateString);
                             setShowCalendarReturn(false);
                         }}
-                        theme={{
-                            // Customize calendar theme if needed
-                        }}
+                        theme={calendarTheme}
+                        style={styles.calendar}
                     />
                 )}
 
                 <TextInput
-                    style={[styles.input,{height: 100, textAlignVertical:'top'}]}
+                    style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
                     placeholder="Notes..."
                     value={notes}
                     onChangeText={setNotes}
@@ -250,7 +269,7 @@ const PlanTripScreen = ({ navigation }) => {
                     placeholderTextColor={colors.secondaryText}
                 />
                 <TextInput
-                    style={[styles.input,{height: 100, textAlignVertical:'top'}]}
+                    style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
                     placeholder="Activities..."
                     value={activities}
                     onChangeText={setActivities}
@@ -433,6 +452,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 15,
     },
+    calendar:{
+        width:'80%',
+        alignSelf:'center',
+        borderColor:colors.border,
+        borderWidth:1,
+        borderRadius:30,
+    }
 });
 
 export default PlanTripScreen;

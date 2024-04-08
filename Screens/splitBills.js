@@ -13,12 +13,12 @@ const colors = getColorScheme();
 
 const SplitBills = ({ navigation }) => {
     const [tripName, setTripName] = useState('');
-    const [destination, setDestination] = useState('');
+    const [destination, setDestination] = useState('Split Bills destination');
     const [departureDate, setDepartureDate] = useState('2024-04-06');
     const [returnDate, setReturnDate] = useState('2024-04-06');
-    const [notes, setNotes] = useState('');
-    const [activities, setActivities] = useState('');
-    const [expectedExpense, setExpectedExpense] = useState('');
+    const [notes, setNotes] = useState('Split Bills Notes');
+    const [activities, setActivities] = useState('Split Bills Activities');
+    const [expectedExpense, setExpectedExpense] = useState('000');
     const [numMembers, setNumMembers] = useState(1);
     const [members, setMembers] = useState([]);
     const [trips, setTrips] = useState([]);
@@ -74,7 +74,7 @@ const SplitBills = ({ navigation }) => {
 
     const handlePlanTrip = async () => {
         if (!tripName || !destination || !departureDate || !returnDate || !notes || !activities || !expectedExpense) {
-            Alert.alert('Dear Nomad!', 'Please fill in all fields before planning the trip');
+            Alert.alert('Dear Nomad!', 'Please fill in all fields before creating the group');
             return;
         }
 

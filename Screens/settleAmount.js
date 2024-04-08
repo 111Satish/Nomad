@@ -26,6 +26,30 @@ const SettleAmount = ({ route }) => {
   const userInfo = userStore.user.userInfo;
   const [showCalendar, setShowCalendar] = useState(false);
 
+  const calendarTheme = {
+    backgroundColor: colors.background,
+    calendarBackground: colors.background,
+    textSectionTitleColor: colors.text,
+    textSectionTitleDisabledColor: colors.secondaryText,
+    selectedDayBackgroundColor: colors.button,
+    selectedDayTextColor: colors.text,
+    todayTextColor: colors.button,
+    dayTextColor: colors.text,
+    textDisabledColor: colors.border,
+    dotColor: colors.button,
+    selectedDotColor: colors.text,
+    arrowColor: colors.button,
+    disabledArrowColor: colors.secondaryText,
+    monthTextColor: colors.text,
+    indicatorColor: colors.button,
+    textDayFontFamily: 'monospace',
+    textMonthFontFamily: 'monospace',
+    textDayHeaderFontFamily: 'monospace',
+    textDayFontSize: 14,
+    textMonthFontSize: 14,
+    textDayHeaderFontSize: 14,
+};
+
 
   const handleSettleAmount = () => {
     if (amount.trim() === '') {
@@ -117,6 +141,7 @@ const SettleAmount = ({ route }) => {
             value={date}
             onChangeText={setDate}
             placeholder="YYYY-MM-DD"
+            editable={false}
             style={[styles.input, styles.dateInput]}
             placeholderTextColor={colors.secondaryText}
           />
@@ -132,9 +157,8 @@ const SettleAmount = ({ route }) => {
             setDate(day.dateString);
             setShowCalendar(false);
           }}
-          theme={{
-            // Customize calendar theme if needed
-          }}
+          theme={calendarTheme}
+          style={styles.calendar}
         />
       )}
       <View style={styles.checkboxContainer}>
@@ -220,6 +244,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 20,
   },
+  calendar:{
+    width:'100%',
+    alignSelf:'center',
+    borderColor:colors.border,
+    borderWidth:1,
+    borderRadius:30,
+}
 });
 
 export default SettleAmount;
